@@ -1,10 +1,12 @@
 import axios from 'axios';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import Config from 'react-native-config';
+import {MMKV} from 'react-native-mmkv';
 
-console.log('BASE_URL', Config.REACT_APP_API_URL);
+const storage = new MMKV();
+
 const axiosInstance = axios.create({
-  baseURL: Config.REACT_APP_API_URL,
+  baseURL: 'http://192.168.0.130:4567',
   timeout: 30000,
 });
 
@@ -14,6 +16,13 @@ axiosInstance.interceptors.request.use(
     if (auth().currentUser != null) {
       const idToken = await auth().currentUser?.getIdToken();
       config.headers.idToken = idToken;
+    }
+    const verifyToken = storage.getString('user.verifyToken');
+    if (verifyToken) {
+      console.log('verifyToken', verifyToken);
+      config.headers.Authorization = `Bearer ${verifyToken}`;
+    } else {
+      console.log('verifyToken is null');
     }
     return config;
   },

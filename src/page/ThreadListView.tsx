@@ -10,7 +10,7 @@ import {
   Image,
   RefreshControl,
 } from 'react-native';
-import {getThreadList} from '../service/apis.tsx';
+import { exchangeVerifyToken, getCategories, getThreadList } from "../service/apis.tsx";
 import {ThreadEntity} from '../types.tsx';
 import {useNavigation} from '@react-navigation/native';
 // import useQuery from '../use/useQuery.tsx';
@@ -27,8 +27,11 @@ const ThreadListView = () => {
   const {isPending, isError, error, data} = useQuery({
     queryKey: ['/api/thread'],
     queryFn: async () => {
-      const response = await getThreadList();
-      return response.data.data as ThreadEntity[];
+      // const response = await getThreadList();
+      // return response.data.data as ThreadEntity[];
+      const response = await exchangeVerifyToken();
+      console.log('response', response.data);
+      return [];
     },
   });
   const [refreshing, setRefreshing] = React.useState(false);

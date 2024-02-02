@@ -35,6 +35,7 @@ import KnowledgeListView from './page/KnowledgeListView.tsx';
 import KnowledgeDetailView from './page/KnowledgeDetailView.tsx';
 import MyWebView from './page/MyWebView.tsx';
 import EmailSignInView from './page/EmailSignInView.tsx';
+import DebugView from "./page/DebugView.tsx";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -63,7 +64,7 @@ function HomeTabs() {
       />
       <Tab.Screen
         name="Thread"
-        component={ThreadListView}
+        component={DebugView}
         options={{
           tabBarLabel: '通知',
           tabBarIcon: ({color, size}) => (

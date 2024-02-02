@@ -3,6 +3,7 @@ import Config from 'react-native-config';
 import EventSource from 'react-native-sse';
 import auth from '@react-native-firebase/auth';
 import {KnowledgeEntity, StreamMessage} from '../types.tsx';
+
 export function createThread() {
   return axiosInstance.post('/api/thread/createThread');
 }
@@ -60,6 +61,7 @@ export function getKnowledgeList() {
 export function getKnowledgeDetail(knowledgeId: string) {
   return axiosInstance.get(`/api/knowledge/${knowledgeId}`);
 }
+
 export function updateKnowledge(
   knowledgeId: string,
   title: string | null,
@@ -75,4 +77,26 @@ export function createKnowledge(threadId: string) {
   return axiosInstance.post('/api/knowledge', {
     threadId: threadId,
   });
+}
+
+export function getCategories() {
+  return axiosInstance.get('/api/v3/categories');
+}
+
+export function getCategoryByCid(cid: number) {
+  return axiosInstance.get(`/api/v3/categories/${cid}`);
+}
+
+export function postTopic() {
+  return axiosInstance.post('/api/v3/topics', {
+    cid: 1,
+    title: 'Test topic',
+    content: "This is the test topic's content",
+    timestamp: 556084800000,
+    tags: ['test', 'topic'],
+  });
+}
+
+export function exchangeVerifyToken() {
+  return axiosInstance.get('/api/v3/exchangeVerifyToken');
 }

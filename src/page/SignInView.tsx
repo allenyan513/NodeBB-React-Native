@@ -25,7 +25,7 @@ import {RNGoogleSigninButton} from '@react-native-google-signin/google-signin/li
 
 GoogleSignin.configure({
   webClientId:
-    '1092651739434-dieqqi9qs6j8acltdvkgc11p54t4hv36.apps.googleusercontent.com',
+    '657481286430-6dqd00nv90aiff1tpjv346uldnesvl6u.apps.googleusercontent.com',
 });
 
 const SignInView = () => {
@@ -60,6 +60,7 @@ const SignInView = () => {
       showPlayServicesUpdateDialog: true,
     });
     const {idToken} = await GoogleSignin.signIn();
+    console.log('idToken', idToken);
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
     await auth().signInWithCredential(googleCredential);
     navigation.goBack();
