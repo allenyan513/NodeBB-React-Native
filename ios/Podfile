@@ -53,3 +53,16 @@ target 'nodebb_app' do
     )
   end
 end
+
+
+pod 'Firebase', :modular_headers => true
+pod 'FirebaseCore', :modular_headers => true
+pod 'FirebaseCoreInternal', :modular_headers => true
+# pod 'FirebaseStorageInternal', :modular_headers => true
+pod 'FirebaseCoreExtension', :modular_headers => true
+# pod 'FirebaseAppCheckInterop', :modular_headers => true
+pod 'FirebaseAuthInterop', :modular_headers => true
+# pod 'FirebaseMessagingInterop', :modular_headers => true
+# pod 'GTMSessionFetcher', :modular_headers => true
+pod 'GoogleUtilities', :modular_headers => true
+$RNFirebaseAsStaticFramework = true
