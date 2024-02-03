@@ -17,3 +17,7 @@ export function calculateTime(time: number) {
     return 'now';
   }
 }
+
+export function isEmpty(str: string) {
+  return str === null || str === undefined || str === '';
+}

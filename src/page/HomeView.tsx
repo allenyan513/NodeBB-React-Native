@@ -1,4 +1,13 @@
-import {Text, View, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  FlatList,
+  RefreshControl,
+  ListRenderItem,
+} from 'react-native';
 import React, {useEffect, useRef, useState, useContext} from 'react';
 import AskQuestionModal from '../component/AskQuestionModal.tsx';
 import {
@@ -6,156 +15,93 @@ import {
   getThreadList,
   getThread,
   createThread,
+  exchangeVerifyToken,
+  getCategories,
 } from '../service/apis.tsx';
 
-import {QuestionEntity, ThreadEntity} from '../types.tsx';
+import {Category, QuestionEntity, ThreadEntity} from '../types.tsx';
 import AskQuestionInputText from '../component/AskQuestionInputText.tsx';
 import COLORS from '../colors.tsx';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {Avatar} from '@rneui/themed';
-import AuthContext from '../context/AuthContext';
+import AuthContext from '../context/AuthContext.js';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
+import {calculateTime} from '../utils.tsx';
+import {styled} from 'nativewind';
+import HeaderView from '../component/HeaderView.tsx';
+import PagerView from 'react-native-pager-view';
+import TopicListView from './TopicListView.tsx';
+
+const StyledView = styled(View);
+const StyledText = styled(Text);
 
 const HomeView = () => {
-  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
-  const [isPending, setIsPending] = useState(false);
   const {currentUser, setCurrentUser} = useContext(AuthContext);
 
-  const onClickAddQuestion = async (content: string | null) => {
-    try {
-      setIsPending(true);
-      const response = await createThread();
-      const thread = response.data.data as ThreadEntity;
-      // @ts-ignore
-      navigation.navigate('ThreadDetail', {
-        threadId: thread.id,
-        pendingQuestion: content,
-      });
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsPending(false);
-    }
-  };
+  const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = React.useState(false);
+  const {isPending, isError, error, data} = useQuery({
+    queryKey: ['/api/v3/categories'],
+    queryFn: async () => {
+      const result = await getCategories();
+      return result.response.categories;
+    },
+  });
 
-  const onClickRequest = () => {
-    getThreadList().then(data => {
-      console.log(data);
+  const renderItem: ListRenderItem<Category> = ({item}) => {
+    console.log('renderItem', item.cid);
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          // @ts-ignore
+          navigation.navigate('TopicList', {
+            cid: item.cid,
+          });
+        }}>
+        <View
+          style={{
+            padding: 20,
+            backgroundColor: 'red',
+            margin: 10,
+            borderRadius: 10,
+          }}>
+          <Text>{item.cid}</Text>
+          <Text>{item.name}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await queryClient.invalidateQueries({
+      queryKey: ['/api/v3/categories'],
     });
+    setRefreshing(false);
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.header}>Mistree</Text>
-        {currentUser ? (
-          <Avatar
-            size={32}
-            rounded
-            title={currentUser?.email?.charAt(0)}
-            containerStyle={{
-              backgroundColor: COLORS.green,
-            }}
-            onPress={() => {
-              // @ts-ignore
-              navigation.navigate('Setting');
-            }}
-          />
-        ) : (
-          <TouchableOpacity
-            onPress={async () => {
-              // @ts-ignore
-              navigation.navigate('SignIn');
-            }}>
-            <Text
-              style={{
-                color: COLORS.green,
-                fontSize: 16,
-              }}>
-              Sign In
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
-      {/*<HeaderView*/}
-      {/*  style={{*/}
-      {/*    marginTop: 64,*/}
-      {/*  }}*/}
-      {/*  title={'mist'}*/}
-      {/*  leftText={'left'}*/}
-      {/*  rightText={'right'}*/}
-      {/*  rightImage={require('../assets/clip.png')}*/}
-      {/*  onClickLeftButton={() => {}}*/}
-      {/*  onClickRightButton={() => {}}*/}
-      {/*/>*/}
-      <View style={styles.sloganContainer}>
-        <Image source={require('../assets/mistree.png')} style={styles.logo} />
-        <Text onPress={onClickRequest} style={styles.sloganText}>
-          Explore unknown areas
-        </Text>
-      </View>
-
-      <AskQuestionInputText
-        onPress={() => {
-          setModalVisible(true);
+    <View
+      style={{
+        flex: 1,
+      }}>
+      <HeaderView
+        title={'Home'}
+        style={{
+          marginTop: 44,
         }}
       />
-
-      <AskQuestionModal
-        modalVisible={modalVisible}
-        isPending={isPending}
-        onClosed={() => {
-          setModalVisible(false);
-        }}
-        onSend={async (content: string | null) => {
-          await onClickAddQuestion(content);
-        }}
-      />
+      <PagerView style={{flex: 1}} initialPage={0}>
+        <View key={'0'}>
+          <TopicListView cid={'recent'} />
+        </View>
+        <View key={'1'}>
+          <TopicListView cid={'popular'} />
+        </View>
+        <TopicListView cid={'1'} />
+      </PagerView>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  headerContainer: {
-    marginTop: 44,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingTop: 12,
-    paddingBottom: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-  },
-  header: {
-    textAlign: 'left',
-    fontSize: 24,
-    color: 'white',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.primary,
-  },
-  sloganContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sloganText: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 30,
-  },
-  logo: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 30,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-});
 
 export default HomeView;

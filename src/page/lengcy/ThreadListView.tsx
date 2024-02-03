@@ -10,16 +10,16 @@ import {
   Image,
   RefreshControl,
 } from 'react-native';
-import { exchangeVerifyToken, getCategories, getThreadList } from "../service/apis.tsx";
-import {ThreadEntity} from '../types.tsx';
+import { exchangeVerifyToken, getCategories, getThreadList } from "../../service/apis.tsx";
+import {ThreadEntity} from '../../types.tsx';
 import {useNavigation} from '@react-navigation/native';
 // import useQuery from '../use/useQuery.tsx';
-import COLORS from '../colors.tsx';
+import COLORS from '../../colors.tsx';
 import React, {useContext, useEffect} from 'react';
-import {calculateTime} from '../utils.tsx';
+import {calculateTime} from '../../utils.tsx';
 import {QueryClient, useQuery, useQueryClient} from '@tanstack/react-query';
-import UnSignInView from '../component/UnSignInView.tsx';
-import AuthContext from '../context/AuthContext';
+import UnSignInView from '../../component/UnSignInView.tsx';
+import AuthContext from '../../context/AuthContext.js';
 
 const ThreadListView = () => {
   const navigation = useNavigation();
@@ -67,7 +67,7 @@ const ThreadListView = () => {
               marginTop: 10,
             }}>
             <Image
-              source={require('../assets/clock999999.png')}
+              source={require('../../assets/clock999999.png')}
               style={{width: 14, height: 14, marginRight: 4}}
             />
             <Text style={styles.content}>{calculateTime(item.created)}</Text>
@@ -78,7 +78,7 @@ const ThreadListView = () => {
               }}
             />
             <Image
-              source={require('../assets/layers999999.png')}
+              source={require('../../assets/layers999999.png')}
               style={{width: 14, height: 14, marginRight: 4}}
             />
             <Text style={styles.content}>{item.questions.length}</Text>

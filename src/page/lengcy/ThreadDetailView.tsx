@@ -15,26 +15,26 @@ import {
   createKnowledge,
   getThread,
   updateKnowledge,
-} from '../service/apis.tsx';
+} from '../../service/apis.tsx';
 import {
   KnowledgeEntity,
   QuestionEntity,
   StreamMessage,
   ThreadEntity,
-} from '../types.tsx';
+} from '../../types.tsx';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import AskQuestionModal from '../component/AskQuestionModal.tsx';
-import AskQuestionInputText from '../component/AskQuestionInputText.tsx';
+import AskQuestionModal from '../../component/AskQuestionModal.tsx';
+import AskQuestionInputText from '../../component/AskQuestionInputText.tsx';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import COLORS from '../colors.tsx';
+import COLORS from '../../colors.tsx';
 import Config from 'react-native-config';
 import 'react-native-url-polyfill/auto';
-import {callStream} from '../service/apis.tsx';
-import HeaderView from '../component/HeaderView.tsx';
+import {callStream} from '../../service/apis.tsx';
+import HeaderView from '../../component/HeaderView.tsx';
 import {Skeleton} from '@rneui/base';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import LoadingOverlay from '../component/LoadingOverlay.tsx';
-import SourceComponent from '../component/SourceComponent.tsx';
+import LoadingOverlay from '../../component/LoadingOverlay.tsx';
+import SourceComponent from '../../component/SourceComponent.tsx';
 
 /**
  * threadId为空，question不为空
@@ -242,8 +242,8 @@ const ThreadDetailView = () => {
     <View style={styles.container}>
       <HeaderView
         title={'Thread'}
-        leftImage={require('../assets/cross-small.png')}
-        rightImage={require('../assets/knowledge.png')}
+        leftImage={require('../../assets/cross-small.png')}
+        rightImage={require('../../assets/knowledge.png')}
         separatorLine={true}
         onClickLeftButton={() => {
           navigation.goBack();

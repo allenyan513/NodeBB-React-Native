@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, {useContext, useRef, useState} from 'react';
 import COLORS from '../colors.tsx';
-import AuthContext from '../context/AuthContext';
+import AuthContext from '../context/AuthContext.js';
 import {useNavigation} from '@react-navigation/native';
 
 interface AskQuestionInputTextProps {

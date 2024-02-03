@@ -10,15 +10,15 @@ import {
   RefreshControl,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import {getKnowledgeList, getThreadList} from '../service/apis.tsx';
-import {KnowledgeEntity, ThreadEntity} from '../types.tsx';
+import {getKnowledgeList, getThreadList} from '../../service/apis.tsx';
+import {KnowledgeEntity, ThreadEntity} from '../../types.tsx';
 
 import {useNavigation} from '@react-navigation/native';
-import COLORS from '../colors.tsx';
+import COLORS from '../../colors.tsx';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
-import ReloadView from '../component/ReloadView.tsx';
-import UnSignInView from '../component/UnSignInView.tsx';
-import AuthContext from '../context/AuthContext';
+import ReloadView from '../../component/ReloadView.tsx';
+import UnSignInView from '../../component/UnSignInView.tsx';
+import AuthContext from '../../context/AuthContext.js';
 
 const KnowledgeListView = () => {
   const navigation = useNavigation();

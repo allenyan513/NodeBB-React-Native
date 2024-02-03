@@ -6,14 +6,14 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {getKnowledgeDetail, updateKnowledge} from '../service/apis.tsx';
-import {KnowledgeEntity, ThreadEntity} from '../types.tsx';
+import {getKnowledgeDetail, updateKnowledge} from '../../service/apis.tsx';
+import {KnowledgeEntity, ThreadEntity} from '../../types.tsx';
 
 import {useNavigation, useRoute} from '@react-navigation/native';
-import COLORS from '../colors.tsx';
+import COLORS from '../../colors.tsx';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import HeaderView from '../component/HeaderView.tsx';
-import ReloadView from '../component/ReloadView.tsx';
+import HeaderView from '../../component/HeaderView.tsx';
+import ReloadView from '../../component/ReloadView.tsx';
 
 const KnowledgeDetailView = () => {
   const navigation = useNavigation();
@@ -77,8 +77,8 @@ const KnowledgeDetailView = () => {
     <View style={styles.rootContainer}>
       <HeaderView
         title={''}
-        leftImage={require('../assets/cross-small.png')}
-        rightImage={require('../assets/save.png')}
+        leftImage={require('../../assets/cross-small.png')}
+        rightImage={require('../../assets/save.png')}
         separatorLine={true}
         onClickLeftButton={() => {
           navigation.goBack();

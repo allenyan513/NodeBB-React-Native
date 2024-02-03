@@ -88,5 +88,12 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>We require access to your photo library so you can select photos or videos to upload with your posts.</string>
+  <key>NSCameraUsageDescription</key>
+  <string>Allowing access to the camera lets you take photos directly to upload with your posts</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>We need access to your microphone so you can record videos with sound to upload with your posts.</string>
 </dict>
 </plist>
+

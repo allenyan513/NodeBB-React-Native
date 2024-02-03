@@ -42,3 +42,171 @@ export interface StreamMessage {
   type: string; // 'source' | 'answer' | 'relatedQuestion'
   data: any;
 }
+
+export interface NodeBBResponse<T> {
+  status: NodeBBStatus;
+  response: T;
+}
+
+export interface NodeBBStatus {
+  code: number;
+  message: string;
+}
+
+export interface CategoriesPostsResponse {
+  posts: Post[];
+}
+export interface CategoriesTopicsResponse {
+  topics: Topic[];
+  nextStart: 0;
+  privileges: any;
+}
+export interface CategoriesResponse {
+  categories: Category[];
+}
+
+export interface User {
+  uid: number;
+  username: string;
+  userslug: string;
+  email: string;
+  emailConfirmed: number;
+  joinDate: number;
+  lastOnline: number;
+  picture: string;
+  fullname: string;
+  displayName: string;
+  location: string;
+  birthday: string;
+  website: string;
+  aboutMe: string;
+  signature: string;
+  uploadedPicture: string;
+  profileViews: number;
+  reputation: number;
+  postCount: number;
+  topicCount: number;
+  lastPostTime: number;
+  banned: number;
+  bannedExpire: number;
+  status: string;
+  flags: number;
+  followerCount: number;
+  followingCount: number;
+  coverUrl: string;
+  coverPosition: string;
+  groupTitle: string;
+  groupTitleArray: string[];
+  iconText: string;
+  iconBgColor: string;
+  joinDateISO: string;
+  lastOnlineISO: string;
+  bannedUntil: number;
+  bannedUntilReadable: string;
+}
+
+export interface Category {
+  cid: number;
+  name: string;
+  description: string;
+  descriptionParsed: string;
+  icon: string;
+  bgColor: string;
+  color: string;
+  slug: string;
+  parentCid: number;
+  topic_count: number;
+  post_count: number;
+  disabled: boolean;
+  order: number;
+  link: string;
+  numRecentReplies: number;
+  class: string;
+  isSection: boolean;
+  minTags: number;
+  maxTags: number;
+  postQueue: number;
+  totalPostCount: number;
+  totalTopicCount: number;
+  subCategoriesPerPage: number;
+  backgroundImage: string;
+}
+
+export interface PostTopicRequest {
+  cid: number;
+  title: string;
+  content: string;
+  timestamp?: number;
+  tags?: string[];
+}
+
+export interface Topic {
+  tid: number;
+  uid: number;
+  cid: number;
+  title: string;
+  slug: string;
+  mainPid: number;
+  postcount: number;
+  viewcount: number;
+  postercount: number;
+  scheduled: number;
+  deleted: number;
+  deleterUid: number;
+  titleRaw: string;
+  locked: number;
+  pinned: number;
+  timestamp: number;
+  timestampISO: string;
+  lastposttime: number;
+  lastposttimeISO: string;
+  pinExpiry: number;
+  pinExpiryISO: string;
+  upvotes: number;
+  downvotes: number;
+  votes: number;
+  teaserPid: number;
+  thumbs: [];
+  numThumbs: number;
+  posts: Post[],
+  category: Category;
+  user: User;
+  author: User;
+  teaser: Post;
+  tags: [];
+  isOwner: boolean;
+  ignored: boolean;
+  unread: boolean;
+  bookmark: number;
+  unreplied: boolean;
+  icons: [];
+  thumb: string;
+  index: number;
+  topicThumb: string; //主题首张图
+}
+
+export interface Post {
+  pid: number;
+  tid: number;
+  content: string;
+  uid: number;
+  timestamp: number;
+  deleted: boolean;
+  upvotes: number;
+  downvotes: number;
+  votes: number;
+  timestampISO: string;
+  user: User;
+  topic: Topic;
+  category: Category;
+  isMainPost: boolean;
+  replies: number;
+}
+
+export interface Tag {
+  value: string;
+  valueEscaped: string;
+  color: string;
+  bgColor: string;
+  score: number;
+}

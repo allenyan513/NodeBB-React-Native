@@ -11,7 +11,7 @@ import {
 import auth from '@react-native-firebase/auth';
 import HeaderView from '../component/HeaderView.tsx';
 import COLORS from '../colors.tsx';
-import AuthContext from '../context/AuthContext';
+import AuthContext from '../context/AuthContext.js';
 import {useNavigation} from '@react-navigation/native';
 import {useQueryClient} from '@tanstack/react-query';
 

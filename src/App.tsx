@@ -22,20 +22,24 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import COLORS from './colors.tsx';
-import AuthContext from './context/AuthContext';
+import AuthContext from './context/AuthContext.js';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 import HomeView from './page/HomeView.tsx';
-import ThreadListView from './page/ThreadListView.tsx';
+import ThreadListView from './page/lengcy/ThreadListView.tsx';
 import SettingView from './page/SettingView.tsx';
 import SignInView from './page/SignInView.tsx';
-import ThreadDetailView from './page/ThreadDetailView.tsx';
-import KnowledgeListView from './page/KnowledgeListView.tsx';
-import KnowledgeDetailView from './page/KnowledgeDetailView.tsx';
+import ThreadDetailView from './page/lengcy/ThreadDetailView.tsx';
+import KnowledgeListView from './page/lengcy/KnowledgeListView.tsx';
+import KnowledgeDetailView from './page/lengcy/KnowledgeDetailView.tsx';
 import MyWebView from './page/MyWebView.tsx';
 import EmailSignInView from './page/EmailSignInView.tsx';
-import DebugView from "./page/DebugView.tsx";
+import DebugView from './page/DebugView.tsx';
+import TopicListView from './page/TopicListView.tsx';
+import TopicDetailView from './page/TopicDetailView.tsx';
+import CreatePostView from './page/CreatePostView.tsx';
+import SelectCategoryView from "./page/SelectCategoryView.tsx";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -61,6 +65,22 @@ function HomeTabs() {
             <Icon name="home" size={24} color={color} />
           ),
         }}
+      />
+      <Tab.Screen
+        name="publish"
+        component={KnowledgeListView}
+        options={{
+          tabBarLabel: '发布',
+          tabBarIcon: ({color, size}) => (
+            <Icon name="home" size={24} color={color} />
+          ),
+        }}
+        listeners={({navigation}) => ({
+          tabPress: e => {
+            e.preventDefault();
+            navigation.navigate('CreatePost');
+          },
+        })}
       />
       <Tab.Screen
         name="Thread"
@@ -97,7 +117,7 @@ function App(): React.JSX.Element {
       return;
     }
     const subscriber = auth().onAuthStateChanged(userState => {
-      console.log('onAuthStateChanged', userState);
+      // console.log('onAuthStateChanged', userState);
       setCurrentUser(userState);
       setIsAuthAlready(true);
     });
@@ -122,20 +142,23 @@ function App(): React.JSX.Element {
                 }}
               />
             </Stack.Group>
+            <Stack.Group>
+              <Stack.Screen name={'TopicDetail'} component={TopicDetailView} />
+            </Stack.Group>
             <Stack.Group screenOptions={{presentation: 'modal'}}>
               <Stack.Screen
                 options={{
                   headerShown: false,
                 }}
-                name="ThreadDetail"
-                component={ThreadDetailView}
+                name="CreatePost"
+                component={CreatePostView}
               />
               <Stack.Screen
                 options={{
                   headerShown: false,
                 }}
-                name="KnowledgeDetail"
-                component={KnowledgeDetailView}
+                name="SelectCategory"
+                component={SelectCategoryView}
               />
               <Stack.Screen
                 options={{
