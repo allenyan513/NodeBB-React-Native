@@ -20,43 +20,11 @@ function DebugView() {
         onPress={() => {
           exchangeVerifyToken()
             .then(response => {
-              const verifyToken = response.data.response.verifyToken;
-              console.log('DebugView verifyToken', verifyToken);
-              setVerifyToken(verifyToken);
             })
             .catch(error => {});
         }}
       />
-      <Button
-        title={'getCategories'}
-        onPress={async () => {
-          const response = await getCategories();
-          console.log('getCategories', response.data);
-        }}
-      />
 
-      <Button
-        title={'getCategoryByCid'}
-        onPress={async () => {
-          const response = await getCategoryByCid(5);
-          console.log('getCategories', response.data);
-        }}
-      />
-
-      <Button
-        title={'getCategoryByCid'}
-        onPress={async () => {
-          const response = await getCategoryByCid(5);
-          console.log('getCategories', response.data);
-        }}
-      />
-      <Button
-        title={'postTopic'}
-        onPress={async () => {
-          const response = await postTopic();
-          console.log('getCategories', response.data);
-        }}
-      />
     </View>
   );
 }

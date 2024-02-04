@@ -1,7 +1,7 @@
 import {Options, RNS3} from 'react-native-aws3';
 
 const options: Options = {
-  keyPrefix: 'uploads/',
+  keyPrefix: '',
   bucket: 'halifaxer-nodebb',
   region: 'us-east-2',
   accessKey: 'AKIAZTFNRMBTIYTHO7AA',

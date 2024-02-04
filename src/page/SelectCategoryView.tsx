@@ -5,32 +5,15 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
-  RefreshControl,
   ListRenderItem,
-  TextInput,
-  Button,
-  ScrollView,
 } from 'react-native';
 import React, {useEffect, useRef, useState, useContext} from 'react';
-import COLORS from '../colors.tsx';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
-import Icon from 'react-native-vector-icons/AntDesign';
 import HeaderView from '../component/HeaderView.tsx';
-import {
-  Asset,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
 import {Category, Topic} from '../types.tsx';
-import {useMMKV, useMMKVObject} from 'react-native-mmkv';
-import {
-  getCategories,
-  getPopularTopics,
-  getRecentTopics,
-  getTopics,
-} from '../service/apis.tsx';
+import {getCategories} from '../service/apis.tsx';
 import SeparatorLine from '../component/SeparatorLine.tsx';
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {useNavigation, useRoute} from '@react-navigation/native';
 
 interface CreatePostViewProps {}
 

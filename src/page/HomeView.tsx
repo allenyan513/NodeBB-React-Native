@@ -1,46 +1,44 @@
 import {
   Text,
   View,
-  StyleSheet,
   TouchableOpacity,
-  Image,
-  FlatList,
-  RefreshControl,
   ListRenderItem,
+  FlatList,
 } from 'react-native';
 import React, {useEffect, useRef, useState, useContext} from 'react';
-import AskQuestionModal from '../component/AskQuestionModal.tsx';
-import {
-  addQuestion,
-  getThreadList,
-  getThread,
-  createThread,
-  exchangeVerifyToken,
-  getCategories,
-} from '../service/apis.tsx';
+import {getCategories} from '../service/apis.tsx';
 
-import {Category, QuestionEntity, ThreadEntity} from '../types.tsx';
-import AskQuestionInputText from '../component/AskQuestionInputText.tsx';
-import COLORS from '../colors.tsx';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {Avatar} from '@rneui/themed';
-import AuthContext from '../context/AuthContext.js';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
-import {calculateTime} from '../utils.tsx';
-import {styled} from 'nativewind';
 import HeaderView from '../component/HeaderView.tsx';
 import PagerView from 'react-native-pager-view';
 import TopicListView from './TopicListView.tsx';
+import Icon from 'react-native-vector-icons/AntDesign';
+import {Avatar} from '@rneui/themed';
+import COLORS from '../colors.tsx';
+import {useMMKVObject} from 'react-native-mmkv';
+import {User} from '../types.tsx';
 
-const StyledView = styled(View);
-const StyledText = styled(Text);
+const defaultTabs = [
+  {
+    title: '最新',
+    cid: 'recent',
+    selected: false,
+  },
+  {
+    title: '热门',
+    cid: 'popular',
+    selected: false,
+  },
+];
 
 const HomeView = () => {
   const navigation = useNavigation();
-  const {currentUser, setCurrentUser} = useContext(AuthContext);
+  const [user, setUser] = useMMKVObject<User>('user');
 
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = React.useState(false);
+  const [tabs, setTabs] = useState(defaultTabs);
   const {isPending, isError, error, data} = useQuery({
     queryKey: ['/api/v3/categories'],
     queryFn: async () => {
@@ -49,35 +47,13 @@ const HomeView = () => {
     },
   });
 
-  const renderItem: ListRenderItem<Category> = ({item}) => {
-    console.log('renderItem', item.cid);
+  const renderTabItem: ListRenderItem<any> = ({item}) => {
     return (
-      <TouchableOpacity
-        onPress={() => {
-          // @ts-ignore
-          navigation.navigate('TopicList', {
-            cid: item.cid,
-          });
-        }}>
-        <View
-          style={{
-            padding: 20,
-            backgroundColor: 'red',
-            margin: 10,
-            borderRadius: 10,
-          }}>
-          <Text>{item.cid}</Text>
-          <Text>{item.name}</Text>
-        </View>
-      </TouchableOpacity>
+      <View
+        style={{padding: 10, backgroundColor: item.selected ? 'red' : 'blue'}}>
+        <Text>{item.title}</Text>
+      </View>
     );
-  };
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await queryClient.invalidateQueries({
-      queryKey: ['/api/v3/categories'],
-    });
-    setRefreshing(false);
   };
 
   return (
@@ -85,20 +61,74 @@ const HomeView = () => {
       style={{
         flex: 1,
       }}>
-      <HeaderView
-        title={'Home'}
+      <View
         style={{
           marginTop: 44,
-        }}
-      />
-      <PagerView style={{flex: 1}} initialPage={0}>
-        <View key={'0'}>
-          <TopicListView cid={'recent'} />
+          flexDirection: 'row',
+          paddingLeft: 12,
+          paddingRight: 12,
+          paddingTop: 8,
+          paddingBottom: 8,
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        <View>
+          <FlatList
+            style={{
+              flexShrink: 0,
+            }}
+            horizontal={true}
+            data={tabs}
+            renderItem={renderTabItem}
+          />
         </View>
-        <View key={'1'}>
-          <TopicListView cid={'popular'} />
-        </View>
-        <TopicListView cid={'1'} />
+        {user && (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            {/*<Icon name={'search1'} size={20} color={'black'} />*/}
+            <Avatar
+              size={32}
+              rounded
+              containerStyle={{
+                backgroundColor: COLORS.green,
+              }}
+              source={{
+                uri: user?.picture,
+              }}
+              onPress={() => {
+                // @ts-ignore
+                navigation.navigate('Setting');
+              }}
+            />
+          </View>
+        )}
+        {!user && (
+          <TouchableOpacity
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate('SignIn');
+            }}>
+            <Text>Sign In</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      <PagerView
+        style={{flex: 1}}
+        initialPage={0}
+        onPageSelected={e => {
+          console.log('onPageSelected', e.nativeEvent.position);
+          const currentIndex = e.nativeEvent.position;
+          const newTabs = tabs.map((tab, index) => {
+            tab.selected = index === currentIndex;
+            return tab;
+          });
+          setTabs(newTabs);
+        }}>
+        <TopicListView key={'0'} cid={'recent'} />
+        <TopicListView key={'1'} cid={'popular'} />
       </PagerView>
     </View>
   );

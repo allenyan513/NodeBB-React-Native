@@ -6,9 +6,9 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
-import React, {useContext, useRef, useState} from 'react';
+import React from 'react';
 import COLORS from '../colors.tsx';
-import AuthContext from '../context/AuthContext.js';
+import {useAuth} from '../context/AuthContext.js';
 import {useNavigation} from '@react-navigation/native';
 
 interface UnSignInProps {
@@ -20,7 +20,7 @@ interface UnSignInProps {
 
 const UnSignInView: React.FC<UnSignInProps> = props => {
   const navigation = useNavigation();
-  const {currentUser} = useContext(AuthContext);
+  const {currentUser} = useAuth();
 
   const onClick = () => {
     //@ts-ignore

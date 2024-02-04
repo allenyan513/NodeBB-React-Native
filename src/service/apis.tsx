@@ -13,6 +13,9 @@ import {
   Post,
   CategoriesResponse,
   CategoriesTopicsResponse,
+  GetNotificationsResponse,
+  User,
+  ExchangeVerifyTokenResponse,
 } from '../types.tsx';
 
 export function createThread() {
@@ -155,6 +158,25 @@ export async function replyToTopic(
   return res.data as NodeBBResponse<Post>;
 }
 
-export function exchangeVerifyToken() {
-  return axiosInstance.get('/api/v3/exchangeVerifyToken');
+/**
+ * idToken交换verifyToken
+ */
+export async function exchangeVerifyToken() {
+  const res = await axiosInstance.get('/api/v3/exchangeVerifyToken');
+  return res.data as NodeBBResponse<ExchangeVerifyTokenResponse>;
+}
+export async function getUserByUid(uid: number) {
+  const res = await axiosInstance.get(`/api/user/uid/${uid}`);
+  return res.data as User;
+}
+export async function getNotifications() {
+  const res = await axiosInstance.get('/api/notifications');
+  return res.data as GetNotificationsResponse;
+}
+export async function updateUserPicture(uid: number, url: string) {
+  const res = await axiosInstance.put(`/api/v3/users/${uid}/picture`, {
+    url: url,
+    type: 'external',
+  });
+  return res.data as NodeBBResponse<any>;
 }

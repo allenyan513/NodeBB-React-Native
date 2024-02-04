@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -14,7 +14,6 @@ import {
   GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
 import COLORS from '../colors.tsx';
-import AuthContext from '../context/AuthContext.js';
 import {useNavigation} from '@react-navigation/native';
 import {
   AppleButton,
@@ -22,6 +21,9 @@ import {
 } from '@invertase/react-native-apple-authentication';
 import LinearGradient from 'react-native-linear-gradient';
 import {RNGoogleSigninButton} from '@react-native-google-signin/google-signin/lib/typescript/src/RNGoogleSiginButton';
+import {exchangeVerifyToken, getUserByUid} from '../service/apis.tsx';
+import {useMMKVNumber, useMMKVObject, useMMKVString} from 'react-native-mmkv';
+import {User} from '../types.tsx';
 
 GoogleSignin.configure({
   webClientId:
@@ -30,7 +32,8 @@ GoogleSignin.configure({
 
 const SignInView = () => {
   const navigation = useNavigation();
-  const {currentUser, setCurrentUser} = useContext(AuthContext);
+  const [verifyToken, setVerifyToken] = useMMKVString('user.verifyToken');
+  const [user, setUser] = useMMKVObject<User>('user');
 
   async function onAppleButtonPress() {
     // Start the sign-in request
@@ -60,18 +63,15 @@ const SignInView = () => {
       showPlayServicesUpdateDialog: true,
     });
     const {idToken} = await GoogleSignin.signIn();
-    console.log('idToken', idToken);
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
     await auth().signInWithCredential(googleCredential);
+    const res = await exchangeVerifyToken();
+    const resVerifyToken = res.response.verifyToken;
+    const resUser = await getUserByUid(res.response.uid);
+    setUser(resUser);
+    setVerifyToken(resVerifyToken);
     navigation.goBack();
   }
-
-  useEffect(() => {
-    if (currentUser) {
-      console.log('SignInView. user login success. Go back');
-      navigation.goBack();
-    }
-  }, [currentUser]);
 
   return (
     <ImageBackground
@@ -229,48 +229,4 @@ const SignInView = () => {
     </ImageBackground>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.secondary,
-    padding: 15,
-  },
-  title: {
-    color: COLORS.primaryTextColor,
-    fontSize: 16,
-    marginLeft: 16,
-    marginBottom: 10,
-  },
-  groupContainer: {
-    backgroundColor: COLORS.third,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 44,
-    paddingLeft: 16,
-    paddingRight: 16,
-  },
-  itemTitle: {
-    color: COLORS.primaryTextColor,
-    fontSize: 16,
-  },
-  itemContent: {
-    color: COLORS.primaryTextColor,
-    fontSize: 16,
-  },
-  separatorLine: {
-    height: 1,
-    backgroundColor: COLORS.separatorColor,
-    marginLeft: 16,
-    marginRight: 16,
-  },
-  arrowRight: {
-    width: 24,
-    height: 24,
-  },
-});
 export default SignInView;

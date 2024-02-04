@@ -1,34 +1,10 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  RefreshControl,
-  ListRenderItem,
-} from 'react-native';
-import React, {useEffect, useRef, useState, useContext} from 'react';
-import {
-  getPopularTopics,
-  getRecentTopics,
-  getTopic,
-  getTopics,
-} from '../service/apis.tsx';
+import {View, FlatList, RefreshControl, ListRenderItem} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {getTopic} from '../service/apis.tsx';
 
-import {
-  Category,
-  Post,
-  QuestionEntity,
-  ThreadEntity,
-  Topic,
-} from '../types.tsx';
-import COLORS from '../colors.tsx';
+import {Post} from '../types.tsx';
 import {Route, useNavigation, useRoute} from '@react-navigation/native';
-import AuthContext from '../context/AuthContext.js';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
-import Icon from 'react-native-vector-icons/AntDesign';
-import HeaderView from '../component/HeaderView.tsx';
 import TopicItemView from '../component/TopicItemView.tsx';
 import SeparatorLine from '../component/SeparatorLine.tsx';
 import PostItemView from '../component/PostItemView.tsx';

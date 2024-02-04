@@ -1,8 +1,7 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import COLORS from '../colors.tsx';
-import AuthContext from '../context/AuthContext.js';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import WebView from 'react-native-webview';
 import HeaderView from '../component/HeaderView.tsx';
 
@@ -12,9 +11,7 @@ interface MyWebViewProps {
 }
 
 const MyWebView = () => {
-  const navigation = useNavigation();
   const router = useRoute();
-  const {currentUser, setCurrentUser} = useContext(AuthContext);
   // @ts-ignore
   const {uri, title} = router.params;
 

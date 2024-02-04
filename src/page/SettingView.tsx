@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useReducer} from 'react';
 import {
   Text,
   View,
@@ -11,17 +11,25 @@ import {
 import auth from '@react-native-firebase/auth';
 import HeaderView from '../component/HeaderView.tsx';
 import COLORS from '../colors.tsx';
-import AuthContext from '../context/AuthContext.js';
+import {useAuth} from '../context/AuthContext.js';
 import {useNavigation} from '@react-navigation/native';
 import {useQueryClient} from '@tanstack/react-query';
+import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
+import {User} from '../types.tsx';
+import {Avatar} from '@rneui/themed';
+import {Asset, launchImageLibrary} from 'react-native-image-picker';
+import AWSHelper from '../service/AWSHepler.tsx';
+import {updateUserPicture} from '../service/apis.tsx';
 
 const SettingView = () => {
   const queryClient = useQueryClient();
   const navigation = useNavigation();
-  const {currentUser, setCurrentUser} = useContext(AuthContext);
+  const {currentUser, setCurrentUser} = useAuth();
+  const [verifyToken, setVerifyToken] = useMMKVString('user.verifyToken');
+  const [user, setUser] = useMMKVObject<User | null>('user');
+  console.log('user', user);
 
   const invalidAllCache = () => {
-    console.log('invalidAllCache');
     queryClient.clear();
     queryClient.invalidateQueries({
       queryKey: ['/api/thread'],
@@ -31,12 +39,48 @@ const SettingView = () => {
     });
   };
 
+  const uploadAvatar = async (asset: Asset) => {
+    try {
+      const uid = user?.uid;
+      if (uid === undefined) {
+        Alert.alert('Error', 'User is not found');
+        return;
+      }
+      const s3Url = await AWSHelper.uploadFile(
+        // @ts-ignore
+        asset.uri,
+        asset.fileName,
+        asset.type,
+      );
+      await updateUserPicture(uid, s3Url);
+      Alert.alert('Success', 'Avatar updated');
+    } catch (e) {
+      Alert.alert('Error', 'Failed to upload avatar');
+    }
+  };
+
+  const onClickChangeAvatar = () => {
+    launchImageLibrary({mediaType: 'photo'}, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+      } else {
+        console.log('response', response);
+        // @ts-ignore
+        uploadAvatar(response.assets[0]);
+      }
+    });
+  };
+
   const onClickSignOut = () => {
     auth()
       .signOut()
       .then(() => {
         invalidAllCache();
         console.log('User signed out!');
+        setVerifyToken('');
+        setUser(null);
         navigation.goBack();
       })
       .catch(error => {
@@ -93,13 +137,33 @@ const SettingView = () => {
         style={{
           backgroundColor: COLORS.primary,
         }}
-        title={'Setting'}
+        title={'设置'}
         leftImage={require('../assets/cross-small.png')}
         separatorLine={true}
       />
       <View style={styles.container}>
-        <Text style={styles.title}>Account</Text>
+        <Text style={styles.title}>个人信息</Text>
         <View style={styles.groupContainer}>
+          <View style={styles.itemContainer}>
+            <Text style={styles.itemTitle}>昵称</Text>
+            <Text style={styles.itemContent}>{user?.username}</Text>
+          </View>
+          <TouchableOpacity onPress={onClickChangeAvatar}>
+            <View style={styles.itemContainer}>
+              <Text style={styles.itemTitle}>头像</Text>
+              <Avatar
+                size={32}
+                rounded
+                containerStyle={{
+                  backgroundColor: COLORS.green,
+                }}
+                source={{
+                  uri: user?.picture,
+                }}
+                onPress={() => {}}
+              />
+            </View>
+          </TouchableOpacity>
           <View style={styles.itemContainer}>
             <Text style={styles.itemTitle}>Email</Text>
             <Text style={styles.itemContent}>{currentUser?.email}</Text>

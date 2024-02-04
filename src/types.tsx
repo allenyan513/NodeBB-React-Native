@@ -56,11 +56,13 @@ export interface NodeBBStatus {
 export interface CategoriesPostsResponse {
   posts: Post[];
 }
+
 export interface CategoriesTopicsResponse {
   topics: Topic[];
   nextStart: 0;
   privileges: any;
 }
+
 export interface CategoriesResponse {
   categories: Category[];
 }
@@ -103,6 +105,7 @@ export interface User {
   lastOnlineISO: string;
   bannedUntil: number;
   bannedUntilReadable: string;
+  verifyToken: string; //重要 用于api请求
 }
 
 export interface Category {
@@ -168,7 +171,7 @@ export interface Topic {
   teaserPid: number;
   thumbs: [];
   numThumbs: number;
-  posts: Post[],
+  posts: Post[];
   category: Category;
   user: User;
   author: User;
@@ -210,3 +213,28 @@ export interface Tag {
   bgColor: string;
   score: number;
 }
+
+export interface GetNotificationsResponse {
+  notifications: Notification[];
+}
+
+export interface Notification {
+  bodyShort: string;
+  path: string;
+  nid: string;
+  from: number;
+  importance: number;
+  datetime: number;
+  datetimeISO: string;
+  user: User;
+  image: string;
+  read: boolean;
+  readClass: string;
+}
+
+
+export interface ExchangeVerifyTokenResponse{
+  uid: number;
+  verifyToken: string;
+}
+
