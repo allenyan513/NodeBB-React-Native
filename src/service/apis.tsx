@@ -173,10 +173,35 @@ export async function getNotifications() {
   const res = await axiosInstance.get('/api/notifications');
   return res.data as GetNotificationsResponse;
 }
-export async function updateUserPicture(uid: number, url: string) {
-  const res = await axiosInstance.put(`/api/v3/users/${uid}/picture`, {
-    url: url,
-    type: 'external',
-  });
-  return res.data as NodeBBResponse<any>;
+
+const API = {
+  updateUserPicture: async function (uid: number, url: string) {
+    const res = await axiosInstance.put(`/api/v3/users/${uid}/picture`, {
+      url: url,
+      type: 'external',
+    });
+    return res.data as NodeBBResponse<any>;
+  },
+
+  replyTopic: async function (
+    tid: number,
+    content: string,
+    toPid: number | null,
+  ) {
+    const data: ReplyTopicRequest = {
+      content: content,
+    };
+    if (toPid) {
+      data.toPid = toPid;
+    }
+    const res = await axiosInstance.post(`/api/v3/topics/${tid}`, data);
+    return res.data as NodeBBResponse<Post>;
+  },
+};
+
+interface ReplyTopicRequest {
+  content: string;
+  toPid?: number;
 }
+
+export default API;

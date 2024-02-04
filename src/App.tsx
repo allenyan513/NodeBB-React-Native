@@ -13,7 +13,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import COLORS from './colors.tsx';
-import {AuthProvider, useAuth} from './context/AuthContext.js';
+import {AuthProvider, useAuth} from './context/AuthContext.tsx';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 import HomeView from './page/HomeView.tsx';
@@ -25,6 +25,7 @@ import TopicDetailView from './page/TopicDetailView.tsx';
 import CreatePostView from './page/CreatePostView.tsx';
 import SelectCategoryView from './page/SelectCategoryView.tsx';
 import NotificationsView from './page/NotificationsView.tsx';
+import ReplyPostView from './page/ReplyPostView.tsx';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -82,22 +83,7 @@ function HomeTabs() {
 }
 
 function App(): React.JSX.Element {
-  // const [isAuthAlready, setIsAuthAlready] = useState(false);
-  // const [currentUser, setCurrentUser] =
-  //   useState<FirebaseAuthTypes.User | null>();
   const queryClient = new QueryClient();
-
-  // useEffect(() => {
-  //   if (isAuthAlready) {
-  //     return;
-  //   }
-  //   const subscriber = auth().onAuthStateChanged(userState => {
-  //     // console.log('onAuthStateChanged', userState);
-  //     setCurrentUser(userState);
-  //     setIsAuthAlready(true);
-  //   });
-  //   return subscriber; // unsubscribe on unmount
-  // }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -123,6 +109,13 @@ function App(): React.JSX.Element {
                 }}
                 name="CreatePost"
                 component={CreatePostView}
+              />
+              <Stack.Screen
+                options={{
+                  headerShown: false,
+                }}
+                name="ReplyPost"
+                component={ReplyPostView}
               />
               <Stack.Screen
                 options={{

@@ -8,36 +8,19 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import auth from '@react-native-firebase/auth';
 import HeaderView from '../component/HeaderView.tsx';
 import COLORS from '../colors.tsx';
-import {useAuth} from '../context/AuthContext.js';
+import {useAuth} from '../context/AuthContext.tsx';
 import {useNavigation} from '@react-navigation/native';
-import {useQueryClient} from '@tanstack/react-query';
-import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
-import {User} from '../types.tsx';
 import {Avatar} from '@rneui/themed';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import AWSHelper from '../service/AWSHepler.tsx';
-import {updateUserPicture} from '../service/apis.tsx';
+import API from '../service/apis.tsx';
 
 const SettingView = () => {
-  const queryClient = useQueryClient();
   const navigation = useNavigation();
-  const {currentUser, setCurrentUser} = useAuth();
-  const [verifyToken, setVerifyToken] = useMMKVString('user.verifyToken');
-  const [user, setUser] = useMMKVObject<User | null>('user');
-  console.log('user', user);
-
-  const invalidAllCache = () => {
-    queryClient.clear();
-    queryClient.invalidateQueries({
-      queryKey: ['/api/thread'],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ['/api/knowledge'],
-    });
-  };
+  const {currentUser, user, refreshVerifyTokenAndUser, signOut, deleteUser} =
+    useAuth();
 
   const uploadAvatar = async (asset: Asset) => {
     try {
@@ -52,7 +35,8 @@ const SettingView = () => {
         asset.fileName,
         asset.type,
       );
-      await updateUserPicture(uid, s3Url);
+      await API.updateUserPicture(uid, s3Url);
+      await refreshVerifyTokenAndUser();
       Alert.alert('Success', 'Avatar updated');
     } catch (e) {
       Alert.alert('Error', 'Failed to upload avatar');
@@ -73,20 +57,12 @@ const SettingView = () => {
     });
   };
 
-  const onClickSignOut = () => {
-    auth()
-      .signOut()
-      .then(() => {
-        invalidAllCache();
-        console.log('User signed out!');
-        setVerifyToken('');
-        setUser(null);
-        navigation.goBack();
-      })
-      .catch(error => {
-        console.log('error', error);
-      });
+  const onClickSignOut = async () => {
+    await signOut();
+    console.log('User signed out!');
+    navigation.goBack();
   };
+
   const onClickDeleteAccount = () => {
     Alert.alert(
       'Delete Account',
@@ -98,32 +74,28 @@ const SettingView = () => {
         },
         {
           text: 'Delete',
-          onPress: () => {
-            auth()
-              .currentUser?.delete()
-              .then(() => {
-                invalidAllCache();
-                console.log('User deleted!');
-                navigation.goBack();
-              })
-              .catch(error => {
-                console.log('error', error);
-                if (error.code === 'auth/requires-recent-login') {
-                  Alert.alert(
-                    'Dangerous action',
-                    'This operation is sensitive and requires recent authentication. Please sign in again to delete your account.',
-                    [
-                      {
-                        text: 'OK',
-                        onPress: () => {
-                          onClickSignOut();
-                        },
+          onPress: async () => {
+            try {
+              await deleteUser();
+            } catch (error) {
+              console.log('error', error);
+              // @ts-ignore
+              if (error.code === 'auth/requires-recent-login') {
+                Alert.alert(
+                  'Dangerous action',
+                  'This operation is sensitive and requires recent authentication. Please sign in again to delete your account.',
+                  [
+                    {
+                      text: 'OK',
+                      onPress: () => {
+                        onClickSignOut();
                       },
-                    ],
-                    {cancelable: false},
-                  );
-                }
-              });
+                    },
+                  ],
+                  {cancelable: false},
+                );
+              }
+            }
           },
         },
       ],

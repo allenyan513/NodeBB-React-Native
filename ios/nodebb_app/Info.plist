@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>nodebb_app</string>
+	<string>Halifaxer</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -50,8 +50,14 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Allowing access to the camera lets you take photos directly to upload with your posts</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need access to your microphone so you can record videos with sound to upload with your posts.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We require access to your photo library so you can select photos or videos to upload with your posts.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -88,12 +94,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-  <key>NSPhotoLibraryUsageDescription</key>
-  <string>We require access to your photo library so you can select photos or videos to upload with your posts.</string>
-  <key>NSCameraUsageDescription</key>
-  <string>Allowing access to the camera lets you take photos directly to upload with your posts</string>
-  <key>NSMicrophoneUsageDescription</key>
-  <string>We need access to your microphone so you can record videos with sound to upload with your posts.</string>
 </dict>
 </plist>
-

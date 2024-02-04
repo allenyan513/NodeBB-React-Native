@@ -18,7 +18,7 @@ import {
 import {Category, QuestionEntity, ThreadEntity, Topic} from '../types.tsx';
 import COLORS from '../colors.tsx';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {useAuth} from '../context/AuthContext.js';
+import {useAuth} from '../context/AuthContext.tsx';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import Icon from 'react-native-vector-icons/AntDesign';
 import TopicItemView from '../component/TopicItemView.tsx';

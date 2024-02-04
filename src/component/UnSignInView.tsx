@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import COLORS from '../colors.tsx';
-import {useAuth} from '../context/AuthContext.js';
+import {useAuth} from '../context/AuthContext.tsx';
 import {useNavigation} from '@react-navigation/native';
 
 interface UnSignInProps {
