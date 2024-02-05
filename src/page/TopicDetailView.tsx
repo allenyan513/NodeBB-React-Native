@@ -8,7 +8,6 @@ import {
   Alert,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import API, {getTopic} from '../service/apis.tsx';
 
 import {Post} from '../types.tsx';
 import {Route, useNavigation, useRoute} from '@react-navigation/native';
@@ -20,6 +19,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import ReplyPostModal from '../component/ReplyPostModal.tsx';
 import {Asset} from 'react-native-image-picker';
 import AWSHelper from '../service/AWSHepler.tsx';
+import TopicAPI from '../service/topicAPI.tsx';
 
 interface TopicDetailViewProps {
   // tid: string;
@@ -39,7 +39,7 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
   const {isPending, isError, error, data} = useQuery({
     queryKey: ['/api/v3/topic/:tid', tid],
     queryFn: async () => {
-      const result = await getTopic(tid);
+      const result = await TopicAPI.getTopic(tid);
       return result;
     },
   });
@@ -59,7 +59,7 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
       newContent += content;
 
       // @ts-ignore
-      const response = await API.replyTopic(tid, newContent, null);
+      const response = await TopicAPI.replyTopic(tid, newContent, null);
       await queryClient.invalidateQueries({
         queryKey: ['/api/v3/topics/:tid', tid],
       });

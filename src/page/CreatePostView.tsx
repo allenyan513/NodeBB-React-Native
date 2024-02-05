@@ -31,8 +31,8 @@ import {Category, KnowledgeEntity, PostTopicRequest, Topic} from '../types.tsx';
 import {useMMKV, useMMKVObject} from 'react-native-mmkv';
 import {useNavigation} from '@react-navigation/native';
 import {isEmpty} from '../utils.tsx';
-import {postTopic, updateKnowledge} from '../service/apis.tsx';
 import AWSHelper from '../service/AWSHepler.tsx';
+import TopicAPI from '../service/topicAPI.tsx';
 
 interface CreatePostViewProps {}
 
@@ -60,7 +60,7 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
         content: newData.content,
         cid: newData.cid,
       };
-      const response = await postTopic(newTopic);
+      const response = await TopicAPI.postTopic(newTopic);
       return response.response;
     },
     onSuccess: (data, variables, context) => {

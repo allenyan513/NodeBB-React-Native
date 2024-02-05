@@ -12,10 +12,10 @@ import HeaderView from '../component/HeaderView.tsx';
 import COLORS from '../colors.tsx';
 import {useAuth} from '../context/AuthContext.tsx';
 import {useNavigation} from '@react-navigation/native';
-import {Avatar} from '@rneui/themed';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import AWSHelper from '../service/AWSHepler.tsx';
-import API from '../service/apis.tsx';
+import {Avatar} from 'native-base';
+import UserAPI from '../service/userAPI.tsx';
 
 const SettingView = () => {
   const navigation = useNavigation();
@@ -35,7 +35,7 @@ const SettingView = () => {
         asset.fileName,
         asset.type,
       );
-      await API.updateUserPicture(uid, s3Url);
+      await UserAPI.updateUserPicture(uid, s3Url);
       await refreshVerifyTokenAndUser();
       Alert.alert('Success', 'Avatar updated');
     } catch (e) {
@@ -124,15 +124,10 @@ const SettingView = () => {
             <View style={styles.itemContainer}>
               <Text style={styles.itemTitle}>头像</Text>
               <Avatar
-                size={32}
-                rounded
-                containerStyle={{
-                  backgroundColor: COLORS.green,
-                }}
+                size={'sm'}
                 source={{
                   uri: user?.picture,
                 }}
-                onPress={() => {}}
               />
             </View>
           </TouchableOpacity>

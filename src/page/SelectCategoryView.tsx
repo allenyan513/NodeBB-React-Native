@@ -11,9 +11,9 @@ import React, {useEffect, useRef, useState, useContext} from 'react';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import HeaderView from '../component/HeaderView.tsx';
 import {Category, Topic} from '../types.tsx';
-import {getCategories} from '../service/apis.tsx';
 import SeparatorLine from '../component/SeparatorLine.tsx';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import CategoryAPI from '../service/categoryAPI.tsx';
 
 interface CreatePostViewProps {}
 
@@ -26,7 +26,7 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
   const {isPending, isError, error, data} = useQuery({
     queryKey: ['/api/v3/categories'],
     queryFn: async () => {
-      const result = await getCategories();
+      const result = await CategoryAPI.getCategories();
       return result.response.categories;
     },
   });

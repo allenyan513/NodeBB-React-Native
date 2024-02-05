@@ -1,11 +1,11 @@
 import {createContext, useContext, useEffect, useState} from 'react';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {exchangeVerifyToken, getUserByUid} from '../service/apis';
 import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {useQueryClient} from '@tanstack/react-query';
 import {User} from '../types.tsx';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
+import UserAPI from '../service/userAPI.tsx';
 
 GoogleSignin.configure({
   webClientId:
@@ -63,9 +63,9 @@ export function AuthProvider({children}: {children: any}) {
    */
   const refreshVerifyTokenAndUser = async () => {
     try {
-      const res = await exchangeVerifyToken();
+      const res = await UserAPI.exchangeVerifyToken();
       setVerifyToken(res.response.verifyToken);
-      const resUser = await getUserByUid(res.response.uid);
+      const resUser = await UserAPI.getUserByUid(res.response.uid);
       setUser(resUser);
     } catch (e) {
       console.error(e);

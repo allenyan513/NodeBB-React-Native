@@ -12,7 +12,6 @@ import {
 import React, {useEffect, useRef, useState} from 'react';
 import COLORS from '../colors.tsx';
 import {SourceEntity} from '../types.tsx';
-import {Skeleton} from '@rneui/base';
 
 interface SourceComponentProps {
   errorMessage?: string;

@@ -8,21 +8,15 @@ import {
   RefreshControl,
   ListRenderItem,
 } from 'react-native';
-import React, {useEffect, useRef, useState, useContext} from 'react';
-import {
-  getPopularTopics,
-  getRecentTopics,
-  getTopics,
-} from '../service/apis.tsx';
+import React, {useReducer} from 'react';
 
-import {Category, QuestionEntity, ThreadEntity, Topic} from '../types.tsx';
-import COLORS from '../colors.tsx';
+import {Topic, TopicAction, TopicState} from '../types.tsx';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {useAuth} from '../context/AuthContext.tsx';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
-import Icon from 'react-native-vector-icons/AntDesign';
 import TopicItemView from '../component/TopicItemView.tsx';
 import SeparatorLine from '../component/SeparatorLine.tsx';
+import TopicAPI from '../service/topicAPI.tsx';
+import CategoryAPI from '../service/categoryAPI.tsx';
 
 interface TopicListViewProps {
   cid: string;
@@ -30,7 +24,6 @@ interface TopicListViewProps {
 
 const TopicListView: React.FC<TopicListViewProps> = props => {
   const navigation = useNavigation();
-  const {currentUser, setCurrentUser} = useAuth();
   const route = useRoute();
 
   const queryClient = useQueryClient();
@@ -38,22 +31,56 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
   const {isPending, isError, error, data} = useQuery({
     queryKey: ['/api/v3/categories/:cid/topics' + props.cid],
     queryFn: async () => {
+      let topics: Topic[] = [];
       if (props.cid === 'recent') {
-        const result = await getRecentTopics();
-        return result.response;
+        const result = await TopicAPI.getRecentTopics();
+        topics = result.response;
       } else if (props.cid === 'popular') {
-        const result = await getPopularTopics();
-        return result.response;
+        const result = await TopicAPI.getPopularTopics();
+        topics = result.response;
       } else {
-        const result = await getTopics(props.cid);
-        return result.response.topics;
+        const result = await CategoryAPI.getTopics(props.cid);
+        topics = result.response.topics;
       }
+      dispatch({type: 'SET_TOPICS', payload: topics});
+      return topics;
     },
   });
 
+  const initialTopicState: TopicState = {
+    topics: [],
+  };
+
+  const topicReducer = (state: TopicState, action: TopicAction): TopicState => {
+    console.log('topicReducer', action.type);
+    switch (action.type) {
+      case 'SET_TOPICS':
+        return {
+          ...state,
+          topics: action.payload,
+        };
+      case 'UPVOTE':
+      case 'DOWNVOTE':
+        const {tid, delta} = action.payload;
+        return {
+          ...state,
+          topics: state.topics.map(topic => {
+            if (topic.tid === tid) {
+              return {...topic, upvotes: topic.upvotes + delta};
+            }
+            return topic;
+          }),
+        };
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(topicReducer, initialTopicState);
+
   const renderSeparator = () => <SeparatorLine />;
   const renderItem: ListRenderItem<Topic> = ({item}) => {
-    return <TopicItemView topic={item} />;
+    return <TopicItemView topic={item} dispatch={dispatch} />;
   };
   const onRefresh = async () => {
     console.log('onRefresh');
@@ -67,7 +94,7 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
   return (
     <View style={{}}>
       <FlatList
-        data={data}
+        data={state.topics}
         renderItem={renderItem}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

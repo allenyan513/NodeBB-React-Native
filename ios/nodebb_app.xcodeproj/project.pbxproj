@@ -538,7 +538,7 @@
 				DEVELOPMENT_TEAM = 32N4TZ2JDX;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = nodebb_app/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Halifaxer;
+				INFOPLIST_KEY_CFBundleDisplayName = "哈法议事厅";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -567,7 +567,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 32N4TZ2JDX;
 				INFOPLIST_FILE = nodebb_app/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Halifaxer;
+				INFOPLIST_KEY_CFBundleDisplayName = "哈法议事厅";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -654,7 +654,10 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -722,7 +725,10 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

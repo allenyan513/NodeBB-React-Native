@@ -4,20 +4,17 @@ import {
   TouchableOpacity,
   ListRenderItem,
   FlatList,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useEffect, useRef, useState, useContext} from 'react';
-import {getCategories} from '../service/apis.tsx';
-
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
-import HeaderView from '../component/HeaderView.tsx';
 import PagerView from 'react-native-pager-view';
 import TopicListView from './TopicListView.tsx';
-import Icon from 'react-native-vector-icons/AntDesign';
-import {Avatar} from '@rneui/themed';
-import COLORS from '../colors.tsx';
 import {useMMKVObject} from 'react-native-mmkv';
 import {User} from '../types.tsx';
+import {Avatar} from 'native-base';
+import CategoryAPI from '../service/categoryAPI.tsx';
 
 const defaultTabs = [
   {
@@ -42,7 +39,7 @@ const HomeView = () => {
   const {isPending, isError, error, data} = useQuery({
     queryKey: ['/api/v3/categories'],
     queryFn: async () => {
-      const result = await getCategories();
+      const result = await CategoryAPI.getCategories();
       return result.response.categories;
     },
   });
@@ -89,20 +86,18 @@ const HomeView = () => {
               alignItems: 'center',
             }}>
             {/*<Icon name={'search1'} size={20} color={'black'} />*/}
-            <Avatar
-              size={32}
-              rounded
-              containerStyle={{
-                backgroundColor: COLORS.green,
-              }}
-              source={{
-                uri: user?.picture,
-              }}
+            <TouchableWithoutFeedback
               onPress={() => {
                 // @ts-ignore
                 navigation.navigate('Setting');
-              }}
-            />
+              }}>
+              <Avatar
+                size={'sm'}
+                source={{
+                  uri: user?.picture,
+                }}
+              />
+            </TouchableWithoutFeedback>
           </View>
         )}
         {!user && (

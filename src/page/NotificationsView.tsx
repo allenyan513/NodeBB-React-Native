@@ -1,34 +1,13 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  RefreshControl,
-  ListRenderItem,
-} from 'react-native';
+import {View, FlatList, RefreshControl, ListRenderItem} from 'react-native';
 import React, {useEffect, useRef, useState, useContext} from 'react';
-import {
-  getNotifications,
-  getPopularTopics,
-  getRecentTopics,
-  getTopics,
-} from '../service/apis.tsx';
 
-import {
-  Category,
-  Notification,
-  QuestionEntity,
-  ThreadEntity,
-  Topic,
-} from '../types.tsx';
-import COLORS from '../colors.tsx';
+import {Notification} from '../types.tsx';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import SeparatorLine from '../component/SeparatorLine.tsx';
 import NotificationItemView from '../component/NotificationItemView.tsx';
 import HeaderView from '../component/HeaderView.tsx';
+import UserAPI from '../service/userAPI.tsx';
 
 interface NotificationsViewProps {}
 
@@ -41,7 +20,7 @@ const NotificationsView: React.FC<NotificationsViewProps> = props => {
   const {isPending, isError, error, data} = useQuery({
     queryKey: ['/api/notifications'],
     queryFn: async () => {
-      const result = await getNotifications();
+      const result = await UserAPI.getNotifications();
       console.log('NotificationsView. result', result.notifications);
       return result.notifications;
     },

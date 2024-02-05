@@ -1,21 +1,23 @@
 import {
+  Alert,
   Image,
   ListRenderItem,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Topic} from '../types.tsx';
+import {Topic, TopicAction} from '../types.tsx';
 import Icon from 'react-native-vector-icons/AntDesign';
 import React from 'react';
-import {Avatar} from '@rneui/themed';
 import {useNavigation} from '@react-navigation/native';
+import PostAPI from '../service/postAPI.tsx';
 
 interface TopicItemProps {
   topic: Topic | undefined;
+  dispatch: React.Dispatch<TopicAction>;
 }
 
-const TopicItemView: React.FC<TopicItemProps> = ({topic}) => {
+const TopicItemView: React.FC<TopicItemProps> = ({topic, dispatch}) => {
   const navigation = useNavigation();
   const onClickItem = () => {
     console.log('onClickItem', topic?.tid);
@@ -24,6 +26,62 @@ const TopicItemView: React.FC<TopicItemProps> = ({topic}) => {
       tid: topic?.tid,
     });
   };
+
+  const onClickUpvote = async () => {
+    if (topic?.mainPid === undefined) {
+      Alert.alert('Error', 'mainPid is undefined');
+      return;
+    }
+    try {
+      //先更新本地数据
+      dispatch({
+        type: 'UPVOTE',
+        payload: {
+          tid: topic?.tid,
+          delta: 1,
+        },
+      });
+      await PostAPI.vote(topic?.mainPid, 1);
+    } catch (e) {
+      console.error(e);
+      //如果失败，恢复本地数据
+      dispatch({
+        type: 'DOWNVOTE',
+        payload: {
+          tid: topic?.tid,
+          delta: -1,
+        },
+      });
+    }
+  };
+  const onClickDownVote = async () => {
+    if (topic?.mainPid === undefined) {
+      Alert.alert('Error', 'mainPid is undefined');
+      return;
+    }
+    try {
+      //先更新本地数据
+      dispatch({
+        type: 'DOWNVOTE',
+        payload: {
+          tid: topic?.tid,
+          delta: -1,
+        },
+      });
+      await PostAPI.vote(topic?.mainPid, -1);
+    } catch (e) {
+      console.error(e);
+      //如果失败，恢复本地数据
+      dispatch({
+        type: 'UPVOTE',
+        payload: {
+          tid: topic?.tid,
+          delta: 1,
+        },
+      });
+    }
+  };
+
   return (
     <TouchableOpacity onPress={onClickItem}>
       <View
@@ -75,9 +133,40 @@ const TopicItemView: React.FC<TopicItemProps> = ({topic}) => {
             style={{
               flexDirection: 'row',
             }}>
-            <Icon name={'up'} />
-            <Icon name={'down'} />
-            <Icon name={'up'} />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderWidth: 1,
+                borderColor: 'gray',
+                borderRadius: 5,
+                marginRight: 10,
+                padding: 5,
+              }}>
+              <Icon onPress={onClickUpvote} size={20} name={'up'} />
+              <Text>{topic?.upvotes}</Text>
+              <Icon
+                style={{
+                  marginLeft: 10,
+                }}
+                onPress={onClickDownVote}
+                size={20}
+                name={'down'}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderWidth: 1,
+                borderColor: 'gray',
+                borderRadius: 5,
+                marginRight: 10,
+                padding: 5,
+              }}>
+              <Icon name={'message1'} />
+              <Text>{topic?.postcount}</Text>
+            </View>
           </View>
           <Icon name={'up'} />
         </View>

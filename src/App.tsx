@@ -26,6 +26,7 @@ import CreatePostView from './page/CreatePostView.tsx';
 import SelectCategoryView from './page/SelectCategoryView.tsx';
 import NotificationsView from './page/NotificationsView.tsx';
 import ReplyPostView from './page/ReplyPostView.tsx';
+import {NativeBaseProvider} from 'native-base';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -86,77 +87,82 @@ function App(): React.JSX.Element {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Group>
-              <Stack.Screen
-                name="Mistree"
-                component={HomeTabs}
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </Stack.Group>
-            <Stack.Group>
-              <Stack.Screen name={'TopicDetail'} component={TopicDetailView} />
-            </Stack.Group>
-            <Stack.Group screenOptions={{presentation: 'modal'}}>
-              <Stack.Screen
-                options={{
-                  headerShown: false,
-                }}
-                name="CreatePost"
-                component={CreatePostView}
-              />
-              <Stack.Screen
-                options={{
-                  headerShown: false,
-                }}
-                name="ReplyPost"
-                component={ReplyPostView}
-              />
-              <Stack.Screen
-                options={{
-                  headerShown: false,
-                }}
-                name="SelectCategory"
-                component={SelectCategoryView}
-              />
-              <Stack.Screen
-                options={{
-                  headerShown: false,
-                }}
-                name={'Setting'}
-                component={SettingView}
-              />
-              <Stack.Screen
-                options={{
-                  headerShown: false,
-                }}
-                name={'SignIn'}
-                component={SignInView}
-              />
-              <Stack.Screen
-                options={{
-                  headerShown: false,
-                }}
-                name={'MyWebView'}
-                component={MyWebView}
-              />
-              <Stack.Screen
-                options={{
-                  headerShown: false,
-                }}
-                name={'EmailSignIn'}
-                component={EmailSignInView}
-              />
-            </Stack.Group>
-          </Stack.Navigator>
-        </NavigationContainer>
-      </AuthProvider>
-    </QueryClientProvider>
+    <NativeBaseProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <NavigationContainer>
+            <Stack.Navigator>
+              <Stack.Group>
+                <Stack.Screen
+                  name="Mistree"
+                  component={HomeTabs}
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+              </Stack.Group>
+              <Stack.Group>
+                <Stack.Screen
+                  name={'TopicDetail'}
+                  component={TopicDetailView}
+                />
+              </Stack.Group>
+              <Stack.Group screenOptions={{presentation: 'modal'}}>
+                <Stack.Screen
+                  options={{
+                    headerShown: false,
+                  }}
+                  name="CreatePost"
+                  component={CreatePostView}
+                />
+                <Stack.Screen
+                  options={{
+                    headerShown: false,
+                  }}
+                  name="ReplyPost"
+                  component={ReplyPostView}
+                />
+                <Stack.Screen
+                  options={{
+                    headerShown: false,
+                  }}
+                  name="SelectCategory"
+                  component={SelectCategoryView}
+                />
+                <Stack.Screen
+                  options={{
+                    headerShown: false,
+                  }}
+                  name={'Setting'}
+                  component={SettingView}
+                />
+                <Stack.Screen
+                  options={{
+                    headerShown: false,
+                  }}
+                  name={'SignIn'}
+                  component={SignInView}
+                />
+                <Stack.Screen
+                  options={{
+                    headerShown: false,
+                  }}
+                  name={'MyWebView'}
+                  component={MyWebView}
+                />
+                <Stack.Screen
+                  options={{
+                    headerShown: false,
+                  }}
+                  name={'EmailSignIn'}
+                  component={EmailSignInView}
+                />
+              </Stack.Group>
+            </Stack.Navigator>
+          </NavigationContainer>
+        </AuthProvider>
+      </QueryClientProvider>
+    </NativeBaseProvider>
   );
 }
 export default App;

@@ -7,10 +7,10 @@ import {
   View,
 } from 'react-native';
 import {Post, Topic} from '../types.tsx';
-import Icon from 'react-native-vector-icons/AntDesign';
 import React from 'react';
-import {Avatar} from '@rneui/themed';
 import RenderHTML from 'react-native-render-html';
+import {Avatar} from 'native-base';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 interface PostItemProps {
   post: Post;
@@ -26,7 +26,10 @@ const PostItemView: React.FC<PostItemProps> = ({post}) => {
         style={{
           flexDirection: 'row',
         }}>
-        <Avatar rounded source={{uri: post.user.picture}} />
+        <Avatar
+          size={'sm'}
+          source={{uri: post.user.picture}} />
+
         <Text> {post.user.username} </Text>
         <Text> {post.timestampISO} </Text>
       </View>

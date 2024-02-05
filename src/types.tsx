@@ -232,9 +232,37 @@ export interface Notification {
   readClass: string;
 }
 
-
-export interface ExchangeVerifyTokenResponse{
+export interface ExchangeVerifyTokenResponse {
   uid: number;
   verifyToken: string;
 }
 
+export interface TopicState {
+  topics: Topic[];
+}
+
+export type TopicAction =
+  | {
+      type: 'SET_TOPICS';
+      payload: Topic[];
+    }
+  | {
+      type: 'UPVOTE';
+      payload: {
+        tid: number;
+        delta: number;
+      };
+    }
+  | {
+      type: 'DOWNVOTE';
+      payload: {
+        tid: number;
+        delta: number;
+      };
+    }
+  | {type: 'UNVOTE'};
+
+export interface ReplyTopicRequest {
+  content: string;
+  toPid?: number;
+}
