@@ -12,7 +12,7 @@ const CategoryAPI = {
    *
    * @param cid
    */
-  getTopics: async function (cid: string) {
+  getTopics: async function (cid: string | number) {
     const res = await axiosInstance.get(`/api/v3/categories/${cid}/topics`);
     return res.data as NodeBBResponse<CategoriesTopicsResponse>;
   },

@@ -266,3 +266,9 @@ export interface ReplyTopicRequest {
   content: string;
   toPid?: number;
 }
+
+export interface HomeTopTab {
+  cid: string | number;
+  name: string;
+  selected: boolean;
+}

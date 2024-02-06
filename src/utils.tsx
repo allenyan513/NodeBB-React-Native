@@ -1,4 +1,7 @@
-export function calculateTime(time: number) {
+export function calculateTime(time: number | undefined) {
+  if (time === undefined) {
+    return '';
+  }
   const now = new Date().getTime();
   const diff = now - time;
   const minutes = Math.floor(diff / 1000 / 60);

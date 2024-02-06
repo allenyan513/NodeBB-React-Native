@@ -74,9 +74,13 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
   };
 
   const renderSeparator = () => <SeparatorLine />;
-  const renderHeader = () => <TopicItemView topic={data} />;
-  const renderItem: ListRenderItem<Post> = ({item}) => {
-    return <PostItemView post={item} />;
+  const renderHeader = () => (
+    <TopicItemView
+      index={0}
+      topic={data} dispatch={null} isShowInPostList={true} />
+  );
+  const renderItem: ListRenderItem<Post> = props => {
+    return <PostItemView post={props.item} index={props.index} />;
   };
 
   const onRefresh = async () => {
@@ -93,6 +97,7 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
         data={data?.posts}
         renderItem={renderItem}
         ListHeaderComponent={renderHeader}
+        keyExtractor={item => item.pid.toString()}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

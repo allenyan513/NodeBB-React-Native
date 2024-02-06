@@ -12,19 +12,20 @@ import {useQuery, useQueryClient} from '@tanstack/react-query';
 import PagerView from 'react-native-pager-view';
 import TopicListView from './TopicListView.tsx';
 import {useMMKVObject} from 'react-native-mmkv';
-import {User} from '../types.tsx';
+import {HomeTopTab, User} from '../types.tsx';
 import {Avatar} from 'native-base';
 import CategoryAPI from '../service/categoryAPI.tsx';
+import COLORS from '../colors.tsx';
 
-const defaultTabs = [
+const defaultTabs: HomeTopTab[] = [
   {
-    title: '最新',
     cid: 'recent',
+    name: '最新',
     selected: false,
   },
   {
-    title: '热门',
     cid: 'popular',
+    name: '热门',
     selected: false,
   },
 ];
@@ -32,24 +33,58 @@ const defaultTabs = [
 const HomeView = () => {
   const navigation = useNavigation();
   const [user, setUser] = useMMKVObject<User>('user');
-
-  const queryClient = useQueryClient();
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [tabs, setTabs] = useState(defaultTabs);
-  const {isPending, isError, error, data} = useQuery({
+  const [topTabs, setTopTabs] = useState<HomeTopTab[]>(defaultTabs);
+  const flatListRef = useRef<FlatList | null>(null);
+  const pagerViewRef = useRef<PagerView | null>(null);
+  const query = useQuery({
     queryKey: ['/api/v3/categories'],
     queryFn: async () => {
       const result = await CategoryAPI.getCategories();
+      let appendTopTabs: HomeTopTab[] = [];
+      for (const item of result.response.categories) {
+        appendTopTabs.push({
+          cid: item.cid,
+          name: item.name,
+          selected: false,
+        });
+      }
+      setTopTabs(prevState => {
+        return [...prevState, ...appendTopTabs];
+      });
       return result.response.categories;
     },
   });
 
-  const renderTabItem: ListRenderItem<any> = ({item}) => {
+  const renderTabItem: ListRenderItem<HomeTopTab> = props => {
+    const onClickTab = () => {
+      const newTabs = topTabs.map(tab => {
+        tab.selected = tab.cid === props.item.cid;
+        return tab;
+      });
+      setTopTabs(newTabs);
+      console.log('scrollToIndex', props.index);
+      flatListRef?.current?.scrollToIndex({index: props.index});
+      pagerViewRef?.current?.setPage(props.index);
+    };
     return (
-      <View
-        style={{padding: 10, backgroundColor: item.selected ? 'red' : 'blue'}}>
-        <Text>{item.title}</Text>
-      </View>
+      <TouchableWithoutFeedback onPress={onClickTab}>
+        <View
+          style={{
+            padding: 10,
+            borderBottomWidth: 2,
+            borderBottomColor: props.item.selected
+              ? COLORS.lighthouseRed
+              : 'transparent',
+          }}>
+          <Text
+            style={{
+              fontSize: 14,
+              fontWeight: props.item.selected ? 'bold' : 'normal',
+            }}>
+            {props.item.name}
+          </Text>
+        </View>
+      </TouchableWithoutFeedback>
     );
   };
 
@@ -60,22 +95,24 @@ const HomeView = () => {
       }}>
       <View
         style={{
-          marginTop: 44,
           flexDirection: 'row',
           paddingLeft: 12,
           paddingRight: 12,
-          paddingTop: 8,
-          paddingBottom: 8,
+          paddingTop: 44,
           justifyContent: 'space-between',
           alignItems: 'center',
+          borderBottomWidth: 1,
+          borderBottomColor: COLORS.separatorColor,
         }}>
-        <View>
+        <View
+          style={{
+            flex: 1,
+          }}>
           <FlatList
-            style={{
-              flexShrink: 0,
-            }}
+            ref={flatListRef}
             horizontal={true}
-            data={tabs}
+            data={topTabs}
+            showsHorizontalScrollIndicator={false}
             renderItem={renderTabItem}
           />
         </View>
@@ -113,17 +150,19 @@ const HomeView = () => {
       <PagerView
         style={{flex: 1}}
         initialPage={0}
+        ref={pagerViewRef}
+        onPageScroll={e => {}}
         onPageSelected={e => {
-          console.log('onPageSelected', e.nativeEvent.position);
           const currentIndex = e.nativeEvent.position;
-          const newTabs = tabs.map((tab, index) => {
+          const newTabs = topTabs.map((tab, index) => {
             tab.selected = index === currentIndex;
             return tab;
           });
-          setTabs(newTabs);
+          setTopTabs(newTabs);
         }}>
-        <TopicListView key={'0'} cid={'recent'} />
-        <TopicListView key={'1'} cid={'popular'} />
+        {topTabs.map((tab, index) => {
+          return <TopicListView key={index.toString()} cid={tab.cid} />;
+        })}
       </PagerView>
     </View>
   );

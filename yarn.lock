@@ -2409,6 +2409,22 @@
   resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-1.3.21.tgz#debac6becc6b6692da09ec30e705e476a780dfe1"
   integrity sha512-eyS2C6McNR8ihUoYfc166O1D8VYVh9KIl0UQPI8/ZJVsStlfSTgeEEh+WXge6+7SFPnZ4ewzEJdSAHH+jzcEfg==
 
+"@react-navigation/elements@^2.0.0-alpha.5":
+  version "2.0.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.0.0-alpha.5.tgz#819a69431c04a9c6c4acaff4edddddb731440fa9"
+  integrity sha512-LfIzefiwTCmUNYjMTs/2G7bUHPc/VrQ9OfkvMSk/cyqgjjDdJoRq9g6aLP1FsF1tlFKoUpTnWaTsFP6l4DJb8Q==
+  dependencies:
+    color "^4.2.3"
+
+"@react-navigation/material-top-tabs@^7.0.0-alpha.7":
+  version "7.0.0-alpha.7"
+  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-7.0.0-alpha.7.tgz#8a6a76b2a8c45d619494175d2d1675dbab48488a"
+  integrity sha512-6dZGf8HlP9xCdWpaOye+p58m4oCStH736mqoT1VNxjVYGem6wWsXUkQAv3vEySEzrvx5jS4iGhjTRKFHZ48aZw==
+  dependencies:
+    "@react-navigation/elements" "^2.0.0-alpha.5"
+    color "^4.2.3"
+    react-native-tab-view "^4.0.0-alpha.3"
+
 "@react-navigation/native-stack@^6.9.17":
   version "6.9.17"
   resolved "https://registry.yarnpkg.com/@react-navigation/native-stack/-/native-stack-6.9.17.tgz#4fc370b14be07296423ae8c00940fb002c6001b5"
@@ -6969,6 +6985,13 @@ react-native-svg@12.1.1:
     css-select "^2.1.0"
     css-tree "^1.0.0-alpha.39"
 
+react-native-tab-view@^4.0.0-alpha.3:
+  version "4.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-4.0.0-alpha.3.tgz#01626e7cb2cdaee9d4f195db0ebf412a992ed200"
+  integrity sha512-ENtVgQQSMc3WpReLEhR4jQozXtvhpRRZN0NqoKXmExc9fSTcMSzWBoNPAgSosrhEqZ9hfu5TSW8qoN5SZfGV7w==
+  dependencies:
+    use-latest-callback "^0.1.9"
+
 react-native-url-polyfill@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-native-url-polyfill/-/react-native-url-polyfill-2.0.0.tgz#db714520a2985cff1d50ab2e66279b9f91ffd589"
@@ -7939,7 +7962,7 @@ urijs@^1.19.6:
   resolved "https://registry.yarnpkg.com/urijs/-/urijs-1.19.11.tgz#204b0d6b605ae80bea54bea39280cdb7c9f923cc"
   integrity sha512-HXgFDgDommxn5/bIv0cnQZsPhHDA90NPHD6+c/v21U5+Sx5hoP8+dP9IZXBU1gIfvdRfhG8cel9QNPeionfcCQ==
 
-use-latest-callback@^0.1.7:
+use-latest-callback@^0.1.7, use-latest-callback@^0.1.9:
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/use-latest-callback/-/use-latest-callback-0.1.9.tgz#10191dc54257e65a8e52322127643a8940271e2a"
   integrity sha512-CL/29uS74AwreI/f2oz2hLTW7ZqVeV5+gxFeGudzQrgkCytrHw33G4KbnQOrRlAEzzAFXi7dDLMC9zhWcVpzmw==

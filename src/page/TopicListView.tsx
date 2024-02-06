@@ -19,7 +19,7 @@ import TopicAPI from '../service/topicAPI.tsx';
 import CategoryAPI from '../service/categoryAPI.tsx';
 
 interface TopicListViewProps {
-  cid: string;
+  cid: string | number;
 }
 
 const TopicListView: React.FC<TopicListViewProps> = props => {
@@ -79,8 +79,15 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
   const [state, dispatch] = useReducer(topicReducer, initialTopicState);
 
   const renderSeparator = () => <SeparatorLine />;
-  const renderItem: ListRenderItem<Topic> = ({item}) => {
-    return <TopicItemView topic={item} dispatch={dispatch} />;
+  const renderItem: ListRenderItem<Topic> = props => {
+    return (
+      <TopicItemView
+        index={props.index}
+        topic={props.item}
+        dispatch={dispatch}
+        isShowInPostList={false}
+      />
+    );
   };
   const onRefresh = async () => {
     console.log('onRefresh');
