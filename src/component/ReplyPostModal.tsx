@@ -40,7 +40,7 @@ const ReplyPostModal: React.FC<ReplyPostModalProps> = props => {
         console.log('response', response);
         // @ts-ignore
         if (selectedAssets.length + response.assets.length > 3) {
-          Alert.alert('最多只能选择9张图片');
+          Alert.alert('回复最多只能选3张图片');
           return;
         }
         // @ts-ignore
@@ -105,7 +105,6 @@ const ReplyPostModal: React.FC<ReplyPostModalProps> = props => {
               <View
                 style={{
                   flexDirection: 'row',
-                  padding: 12,
                 }}>
                 <Icon
                   style={{
@@ -182,7 +181,10 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.secondary,
     padding: 20,
-    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.separatorColor,
+    alignItems: 'flex-start',
+
     borderTopLeftRadius: 4,
     borderTopRightRadius: 4,
   },
@@ -196,6 +198,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
+    marginBottom: 12,
     marginTop: 20,
   },
 });

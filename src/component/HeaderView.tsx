@@ -1,47 +1,58 @@
-import {Text, View, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ViewStyle,
+  StyleProp,
+} from 'react-native';
 import React, {useRef, useState} from 'react';
 import COLORS from '../colors.tsx';
 
-interface HeaderViewProps {
-  style?: any;
+interface HeaderView2Props {
+  style?: StyleProp<ViewStyle>;
   title: string;
-  leftText?: string;
-  rightText?: string;
-  leftImage?: any;
-  rightImage?: any;
-  separatorLine?: boolean;
-  onClickLeftButton?: () => void;
-  onClickRightButton?: () => void;
+  leftButton?: React.ReactNode;
+  rightButton?: React.ReactNode;
 }
 
-const HeaderView: React.FC<HeaderViewProps> = props => {
+const HeaderView: React.FC<HeaderView2Props> = props => {
   return (
     <View style={props.style}>
       <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.leftContainer}
-          onPress={props.onClickLeftButton}>
-          {props.leftImage ? (
-            <Image source={props.leftImage} style={styles.leftImage} />
-          ) : (
-            <Text style={styles.leftText}>{props.leftText}</Text>
-          )}
-        </TouchableOpacity>
-        <Text numberOfLines={1} ellipsizeMode={'tail'} style={styles.title}>
-          {props.title}
-        </Text>
-        <TouchableOpacity
-          style={styles.rightContainer}
-          onPress={props.onClickRightButton}>
-          {props.rightImage ? (
-            <Image source={props.rightImage} style={styles.rightImage} />
-          ) : (
-            <Text style={styles.rightText}>{props.rightText}</Text>
-          )}
-        </TouchableOpacity>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            marginLeft: 12,
+          }}>
+          {props.leftButton}
+        </View>
+        <View
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text numberOfLines={1} ellipsizeMode={'tail'} style={styles.title}>
+            {props.title}
+          </Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'flex-end',
+            marginRight: 12,
+          }}>
+          {props.rightButton}
+        </View>
       </View>
-
-      {props.separatorLine ? <View style={styles.line} /> : null}
+      <View style={styles.line} />
     </View>
   );
 };
@@ -54,12 +65,11 @@ const styles = StyleSheet.create({
     height: 54,
   },
   title: {
-    flex: 1,
     textAlign: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     color: COLORS.primaryTextColor,
-    fontSize: 20,
+    fontSize: 18,
   },
   leftContainer: {
     width: 44,

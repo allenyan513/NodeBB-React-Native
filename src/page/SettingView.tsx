@@ -2,20 +2,20 @@ import React, {useState, useEffect, useContext, useReducer} from 'react';
 import {
   Text,
   View,
-  Button,
   StyleSheet,
   Image,
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import HeaderView from '../component/HeaderView.tsx';
 import COLORS from '../colors.tsx';
 import {useAuth} from '../context/AuthContext.tsx';
 import {useNavigation} from '@react-navigation/native';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import AWSHelper from '../service/AWSHepler.tsx';
-import {Avatar} from 'native-base';
+import {Avatar, Button} from 'native-base';
 import UserAPI from '../service/userAPI.tsx';
+import HeaderView from '../component/HeaderView.tsx';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 const SettingView = () => {
   const navigation = useNavigation();
@@ -106,12 +106,17 @@ const SettingView = () => {
   return (
     <View style={{flex: 1}}>
       <HeaderView
-        style={{
-          backgroundColor: COLORS.primary,
-        }}
         title={'设置'}
-        leftImage={require('../assets/cross-small.png')}
-        separatorLine={true}
+        leftButton={
+          <Icon
+            name={'left'}
+            size={24}
+            color={COLORS.primaryTextColor}
+            onPress={() => {
+              navigation.goBack();
+            }}
+          />
+        }
       />
       <View style={styles.container}>
         <Text style={styles.title}>个人信息</Text>
@@ -123,12 +128,26 @@ const SettingView = () => {
           <TouchableOpacity onPress={onClickChangeAvatar}>
             <View style={styles.itemContainer}>
               <Text style={styles.itemTitle}>头像</Text>
-              <Avatar
-                size={'sm'}
-                source={{
-                  uri: user?.picture,
-                }}
-              />
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Button
+                  variant="unstyled"
+                  colorScheme={'primary'}
+                  onPress={onClickChangeAvatar}>
+                  更换头像
+                </Button>
+                <Avatar
+                  size={'sm'}
+                  source={{
+                    uri: user?.picture,
+                  }}
+                />
+              </View>
             </View>
           </TouchableOpacity>
           <View style={styles.itemContainer}>
@@ -136,7 +155,7 @@ const SettingView = () => {
             <Text style={styles.itemContent}>{currentUser?.email}</Text>
           </View>
         </View>
-        <Text style={styles.title}>About</Text>
+        <Text style={styles.title}>关于</Text>
         <View style={styles.groupContainer}>
           <TouchableOpacity
             onPress={() => {
@@ -176,7 +195,7 @@ const SettingView = () => {
         <View style={styles.groupContainer}>
           <TouchableOpacity onPress={onClickSignOut}>
             <View style={styles.itemContainer}>
-              <Text style={styles.itemTitle}>Sign out</Text>
+              <Text style={styles.itemTitle}>登出</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -190,7 +209,7 @@ const SettingView = () => {
                     color: 'red',
                   },
                 ]}>
-                Delete account
+                删除帐户
               </Text>
             </View>
           </TouchableOpacity>
@@ -212,7 +231,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   groupContainer: {
-    backgroundColor: COLORS.third,
+    backgroundColor: COLORS.separatorColor,
     borderRadius: 10,
     marginBottom: 20,
   },

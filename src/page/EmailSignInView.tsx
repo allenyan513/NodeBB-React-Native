@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, Button, StyleSheet, TextInput, Alert } from "react-native";
+import {Text, View, Button, StyleSheet, TextInput, Alert} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import COLORS from '../colors.tsx';
 import {useNavigation} from '@react-navigation/native';
-import HeaderView from '../component/HeaderView.tsx';
 import {useAuth} from '../context/AuthContext.tsx';
+import HeaderView from '../component/HeaderView.tsx';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 const EmailSignInView = () => {
   const navigation = useNavigation();
@@ -29,12 +30,17 @@ const EmailSignInView = () => {
         backgroundColor: COLORS.primary,
       }}>
       <HeaderView
-        title={'Email Sign In'}
-        leftImage={require('../assets/cross-small.png')}
-        onClickLeftButton={() => {
-          navigation.goBack();
-        }}
-        separatorLine={true}
+        title={'邮件登录'}
+        leftButton={
+          <Icon
+            name={'left'}
+            size={24}
+            color={COLORS.primaryTextColor}
+            onPress={() => {
+              navigation.goBack();
+            }}
+          />
+        }
       />
       <View
         style={{

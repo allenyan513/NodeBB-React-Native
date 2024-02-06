@@ -1,13 +1,20 @@
-import {View} from 'react-native';
+import {StyleProp, View, ViewStyle} from 'react-native';
 import COLORS from '../colors.tsx';
 
-const SeparatorLine: React.FC = () => {
+interface SeparatorLineProps {
+  style?: StyleProp<ViewStyle>;
+}
+
+const SeparatorLine: React.FC<SeparatorLineProps> = props => {
   return (
     <View
-      style={{
-        height: 1,
-        backgroundColor: COLORS.separatorColor,
-      }}
+      style={[
+        {
+          height: 1,
+          backgroundColor: COLORS.separatorColor,
+        },
+        props.style,
+      ]}
     />
   );
 };

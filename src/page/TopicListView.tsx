@@ -36,6 +36,11 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
         const result = await CategoryAPI.getTopics(props.cid);
         topics = result.response.topics;
       }
+      //过滤已经被删除的帖子
+      topics = topics.filter(item => {
+        return !item.deleted;
+      });
+
       dispatch({
         type: 'SET_TOPICS',
         payload: {
@@ -46,37 +51,6 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
       return topics;
     },
   });
-
-  // const initialTopicState: TopicState = {
-  //   topics: [],
-  // };
-  //
-  // const topicReducer = (state: TopicState, action: TopicAction): TopicState => {
-  //   console.log('topicReducer', action.type);
-  //   switch (action.type) {
-  //     case 'SET_TOPICS':
-  //       return {
-  //         ...state,
-  //         topics: action.payload,
-  //       };
-  //     case 'UPVOTE':
-  //     case 'DOWNVOTE':
-  //       const {tid, delta} = action.payload;
-  //       return {
-  //         ...state,
-  //         topics: state.topics.map(topic => {
-  //           if (topic.tid === tid) {
-  //             return {...topic, upvotes: topic.upvotes + delta};
-  //           }
-  //           return topic;
-  //         }),
-  //       };
-  //     default:
-  //       return state;
-  //   }
-  // };
-  //
-  // const [state, dispatch] = useReducer(topicReducer, initialTopicState);
 
   const renderSeparator = () => <SeparatorLine />;
   const renderItem: ListRenderItem<Topic> = props => {
@@ -98,7 +72,11 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
   };
 
   return (
-    <View style={{}}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: 'white',
+      }}>
       <FlatList
         data={globalState.topicsMap.get(props.cid)}
         renderItem={renderItem}

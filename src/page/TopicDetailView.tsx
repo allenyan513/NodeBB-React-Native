@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 
-import {Post} from '../types.tsx';
 import {Route, useNavigation, useRoute} from '@react-navigation/native';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import TopicItemView from '../component/TopicItemView.tsx';
@@ -21,6 +20,7 @@ import {Asset} from 'react-native-image-picker';
 import AWSHelper from '../service/AWSHepler.tsx';
 import TopicAPI from '../service/topicAPI.tsx';
 import CurrentAvatarView from '../component/CurrentAvatarView.tsx';
+import COLORS from '../colors.tsx';
 
 interface TopicDetailViewProps {
   // tid: string;
@@ -52,7 +52,9 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
           height: 80,
           padding: 8,
           backgroundColor: 'white',
-          borderRadius: 10,
+          borderRadius: 8,
+          borderWidth: 1,
+          borderColor: COLORS.e5e5e5,
         }}>
         <TouchableWithoutFeedback
           onPress={() => {
@@ -62,17 +64,26 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
           <View
             style={{
               height: 44,
-              backgroundColor: 'lightgray',
-              borderRadius: 10,
+              backgroundColor: COLORS.e5e5e5,
+              borderRadius: 8,
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
               paddingLeft: 10,
               paddingRight: 10,
             }}>
-            <Text>Add a comment</Text>
+            <Text
+              style={{
+                color: COLORS.secondaryTextColor,
+              }}>
+              Add a comment
+            </Text>
             <View>
-              <Icon name={'pluscircleo'} size={24} color={'black'} />
+              <Icon
+                name={'pluscircleo'}
+                size={24}
+                color={COLORS.secondaryTextColor}
+              />
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -135,11 +146,7 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
         }}
         ListHeaderComponent={() => {
           return (
-            <TopicItemView
-              index={0}
-              topic={data}
-              isShowInPostList={true}
-            />
+            <TopicItemView index={0} topic={data} isShowInPostList={true} />
           );
         }}
         keyExtractor={item => item.pid.toString()}
@@ -147,7 +154,14 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         ItemSeparatorComponent={() => {
-          return <SeparatorLine />;
+          return (
+            <View
+              style={{
+                height: 8,
+                backgroundColor: 'transparent',
+              }}
+            />
+          );
         }}
       />
       {/*底部回复输入框*/}

@@ -11,6 +11,7 @@ const COLORS = {
   lightGrey: '#f5f5f5',
   ffffff: '#ffffff',
   f9f9f9: '#f9f9f9',
+  e5e5e5: '#e5e5e5',
 };
 
 export default COLORS;

@@ -55,9 +55,6 @@ const ImagePickPreView: React.FC<ImagePickPreViewProps> = props => {
 
   return (
     <FlatList
-      style={{
-        padding: 12,
-      }}
       data={props.assets}
       horizontal={true}
       keyExtractor={(item, index) => index.toString()}

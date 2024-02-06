@@ -73,6 +73,8 @@ const HomeView = () => {
           style={{
             padding: 10,
             borderBottomWidth: 2,
+            alignItems: 'center',
+            justifyContent: 'center',
             borderBottomColor: props.item.selected
               ? COLORS.lighthouseRed
               : 'transparent',
@@ -80,6 +82,7 @@ const HomeView = () => {
           <Text
             style={{
               fontSize: 14,
+              textAlign: 'center',
               fontWeight: props.item.selected ? 'bold' : 'normal',
             }}>
             {props.item.name}
@@ -99,7 +102,8 @@ const HomeView = () => {
           flexDirection: 'row',
           paddingLeft: 12,
           paddingRight: 12,
-          paddingTop: 44,
+          marginTop: 44,
+          height: 54,
           justifyContent: 'space-between',
           alignItems: 'center',
           borderBottomWidth: 1,
@@ -108,6 +112,7 @@ const HomeView = () => {
         <View
           style={{
             flex: 1,
+            justifyContent: 'center',
           }}>
           <FlatList
             ref={flatListRef}

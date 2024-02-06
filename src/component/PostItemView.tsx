@@ -31,7 +31,7 @@ const PostItemView: React.FC<PostItemProps> = ({index, post}) => {
     <View
       style={{
         padding: 10,
-        backgroundColor: isOdd ? COLORS.ffffff : COLORS.f9f9f9,
+        backgroundColor: COLORS.ffffff,
       }}>
       {/*用户头像 & 用户昵称 & 发布时间*/}
       {!isFirst && (

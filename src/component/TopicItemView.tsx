@@ -98,7 +98,7 @@ const TopicItemView: React.FC<TopicItemProps> = ({
       <View
         style={{
           padding: 10,
-          backgroundColor: isOdd ? COLORS.ffffff : COLORS.f9f9f9,
+          backgroundColor: COLORS.ffffff,
         }}>
         <View
           style={{
@@ -118,11 +118,13 @@ const TopicItemView: React.FC<TopicItemProps> = ({
           {/*分类名称 */}
           <Text
             style={{
-              borderColor: topic?.category.bgColor,
+              borderColor: COLORS.f9f9f9,
               borderWidth: 1,
-              padding: 4,
-              borderRadius: 4,
-              color: topic?.category.bgColor,
+              padding: 8,
+              borderRadius: 8,
+              color: COLORS.primaryTextColor,
+              backgroundColor: COLORS.f9f9f9,
+              fontSize: 12,
             }}>
             {topic?.category.name}
           </Text>

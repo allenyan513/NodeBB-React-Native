@@ -6,8 +6,8 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import SeparatorLine from '../component/SeparatorLine.tsx';
 import NotificationItemView from '../component/NotificationItemView.tsx';
-import HeaderView from '../component/HeaderView.tsx';
 import UserAPI from '../service/userAPI.tsx';
+import HeaderView from '../component/HeaderView.tsx';
 
 interface NotificationsViewProps {}
 
@@ -21,15 +21,10 @@ const NotificationsView: React.FC<NotificationsViewProps> = props => {
     queryKey: ['/api/notifications'],
     queryFn: async () => {
       const result = await UserAPI.getNotifications();
-      console.log('NotificationsView. result', result.notifications);
       return result.notifications;
     },
   });
 
-  const renderSeparator = () => <SeparatorLine />;
-  const renderItem: ListRenderItem<Notification> = ({item}) => {
-    return <NotificationItemView data={item} />;
-  };
   const onRefresh = async () => {
     setRefreshing(true);
     await queryClient.invalidateQueries({
@@ -42,18 +37,35 @@ const NotificationsView: React.FC<NotificationsViewProps> = props => {
     <View
       style={{
         flex: 1,
-        marginTop: 44,
       }}>
-      <HeaderView title={'Notifications'} />
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        ItemSeparatorComponent={renderSeparator}
+      <HeaderView
+        style={{
+          marginTop: 44,
+        }}
+        title={'通知'}
       />
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'white',
+        }}>
+        <FlatList
+          style={{
+            flex: 1,
+          }}
+          data={data}
+          renderItem={props => {
+            return <NotificationItemView data={props.item} />;
+          }}
+          keyExtractor={(item, index) => index.toString()}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          ItemSeparatorComponent={() => {
+            return <SeparatorLine />;
+          }}
+        />
+      </View>
     </View>
   );
 };

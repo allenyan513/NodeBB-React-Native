@@ -8,12 +8,12 @@ import {
   RefreshControl,
   ListRenderItem,
   TextInput,
-  Button,
   ScrollView,
   Alert,
 } from 'react-native';
 import React, {useEffect, useRef, useState, useContext} from 'react';
 import COLORS from '../colors.tsx';
+import {Button, Toast} from 'native-base';
 import {
   isCancelledError,
   useMutation,
@@ -21,7 +21,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import Icon from 'react-native-vector-icons/AntDesign';
-import HeaderView from '../component/HeaderView.tsx';
 import {
   Asset,
   launchCamera,
@@ -33,9 +32,17 @@ import {useNavigation} from '@react-navigation/native';
 import {isEmpty} from '../utils.tsx';
 import AWSHelper from '../service/AWSHepler.tsx';
 import TopicAPI from '../service/topicAPI.tsx';
+import HeaderView from '../component/HeaderView.tsx';
+import SeparatorLine from '../component/SeparatorLine.tsx';
+import AddMediaView from '../component/AddMediaView.tsx';
 
 interface CreatePostViewProps {}
 
+/**
+ * 发布帖子
+ * @param props
+ * @constructor
+ */
 const CreatePostView: React.FC<CreatePostViewProps> = props => {
   const queryClient = useQueryClient();
   const navigation = useNavigation();
@@ -43,8 +50,9 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
   const titleTextInputRef = useRef<TextInput>(null);
+
+  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
 
   const [defaultCategory, setDefaultCategory] =
     useMMKVObject<Category>('default.category');
@@ -64,89 +72,37 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
       return response.response;
     },
     onSuccess: (data, variables, context) => {
-      Alert.alert(
-        '发帖成功',
-        '',
-        [
-          {
-            text: 'Ok',
-            onPress: () => {
-              navigation.goBack();
-              // // @ts-ignore
-              // navigation.navigate('TopicDetail', {
-              //   tid: data?.tid,
-              // });
-            },
-          },
-        ],
-        {cancelable: false},
-      );
+      // Alert.alert(
+      //   '发帖成功',
+      //   '',
+      //   [
+      //     {
+      //       text: 'Ok',
+      //       onPress: () => {
+      //         navigation.goBack();
+      //         // // @ts-ignore
+      //         // navigation.navigate('TopicDetail', {
+      //         //   tid: data?.tid,
+      //         // });
+      //       },
+      //     },
+      //   ],
+      //   {cancelable: false},
+      // );
+      Toast.show({
+        description: '发布成功',
+      });
+      navigation.goBack();
     },
     onError: (error, variables, context) => {
       console.error(error);
-      Alert.alert('发帖失败');
+      Alert.alert('发布失败');
     },
   });
 
-  const onClickLaunchPicker = async () => {
-    launchImageLibrary({mediaType: 'photo', selectionLimit: 9}, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.log('ImagePicker Error: ', response.errorMessage);
-      } else {
-        console.log('response', response);
-        //判断如果图片超过9张，就不添加了
-        // @ts-ignore
-        if (selectedAssets.length + response.assets.length > 9) {
-          Alert.alert('最多只能选择9张图片');
-          return;
-        }
-        // @ts-ignore
-        setSelectedAssets(prevState => {
-          // @ts-ignore
-          return [...prevState, ...response.assets];
-        });
-      }
-    });
-  };
+  const isEnablePublish =
+    !isEmpty(title) && !isEmpty(content) && defaultCategory !== undefined;
 
-  const renderItem: ListRenderItem<Asset> = ({item}) => {
-    return (
-      <TouchableOpacity
-        onLongPress={() => {
-          //remove
-          Alert.alert('是否移除这张图片?', '', [
-            {
-              text: 'Cancel',
-              onPress: () => {},
-            },
-            {
-              text: 'Ok',
-              onPress: () => {
-                setSelectedAssets(prevState => {
-                  return prevState.filter(asset => asset.uri !== item.uri);
-                });
-              },
-            },
-          ]);
-        }}>
-        <Image
-          source={{uri: item.uri}}
-          style={{
-            borderRadius: 6,
-            borderWidth: 1,
-            borderColor: 'lightgray',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: 12,
-            width: 200,
-            height: 200,
-          }}
-        />
-      </TouchableOpacity>
-    );
-  };
   const onClickPublish = async () => {
     if (isEmpty(title)) {
       Alert.alert('请补充标题');
@@ -202,88 +158,81 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
     <View
       style={{
         flex: 1,
-        paddingLeft: 12,
-        paddingRight: 12,
       }}>
       <HeaderView
-        title={'Create Post'}
-        onClickRightButton={onClickPublish}
-        rightText={'Publish'}
+        title={''}
+        leftButton={
+          <Icon
+            name={'close'}
+            size={24}
+            color={COLORS.primaryTextColor}
+            onPress={() => navigation.goBack()}
+          />
+        }
+        rightButton={
+          <Button
+            paddingX={24}
+            borderRadius={8}
+            isLoading={mutation.isPending}
+            isDisabled={!isEnablePublish}
+            isLoadingText={'发布中'}
+            colorScheme={'error'}
+            onPress={onClickPublish}>
+            发布
+          </Button>
+        }
       />
       <ScrollView
         style={{
           flex: 1,
+          paddingLeft: 24,
+          paddingRight: 24,
         }}>
+        {/*标题*/}
         <TextInput
           style={{
             fontSize: 20,
             fontWeight: 'bold',
             color: COLORS.primaryTextColor,
-            padding: 12,
+            marginTop: 24,
+            marginBottom: 12,
           }}
           ref={titleTextInputRef}
           numberOfLines={1}
-          placeholder="Title"
+          placeholder="标题"
           placeholderTextColor={COLORS.secondaryTextColor}
           onChangeText={text => setTitle(text)}
         />
+        {/*内容*/}
         <TextInput
           style={{
             minHeight: 150,
-            padding: 12,
             color: COLORS.primaryTextColor,
             textAlignVertical: 'auto',
             textAlign: 'left',
             fontSize: 16,
+            marginBottom: 12,
           }}
           multiline={true}
-          placeholder="body of text"
+          placeholder="内容"
           placeholderTextColor={COLORS.secondaryTextColor}
           onChangeText={text => setContent(text)}
         />
         {/*media bar*/}
-        <View
+        <AddMediaView
           style={{
-            flexDirection: 'row',
-            padding: 12,
-          }}>
-          <Icon
-            style={{
-              padding: 12,
-              borderWidth: 1,
-              borderColor: 'lightgray',
-              borderRadius: 6,
-              marginRight: 12,
-            }}
-            name={'picture'}
-            size={24}
-            color={COLORS.primaryTextColor}
-            onPress={onClickLaunchPicker}
-          />
-          <Icon
-            style={{
-              padding: 12,
-              borderWidth: 1,
-              borderRadius: 6,
-              borderColor: 'lightgray',
-            }}
-            name={'camera'}
-            size={24}
-            color={COLORS.primaryTextColor}
-            onPress={() => {}}
-          />
-        </View>
-        <FlatList
-          style={{
-            padding: 12,
+            marginBottom: 12,
           }}
-          data={selectedAssets}
-          horizontal={true}
-          keyExtractor={(item, index) => index.toString()}
-          ItemSeparatorComponent={() => <View style={{width: 12}} />}
-          renderItem={renderItem}
+          onChanged={(assets: Asset[]) => {
+            setSelectedAssets(assets);
+          }}
         />
         {/*Pick Category*/}
+        <SeparatorLine
+          style={{
+            marginBottom: 12,
+          }}
+        />
         <TouchableOpacity
           onPress={() => {
             // @ts-ignore
@@ -296,7 +245,6 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
           }}>
           <View
             style={{
-              padding: 12,
               flex: 1,
               flexDirection: 'row',
               justifyContent: 'space-between',

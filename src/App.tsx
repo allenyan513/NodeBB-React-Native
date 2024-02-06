@@ -25,8 +25,7 @@ import TopicDetailView from './page/TopicDetailView.tsx';
 import CreatePostView from './page/CreatePostView.tsx';
 import SelectCategoryView from './page/SelectCategoryView.tsx';
 import NotificationsView from './page/NotificationsView.tsx';
-import ReplyPostView from './page/ReplyPostView.tsx';
-import {NativeBaseProvider} from 'native-base';
+import {extendTheme, NativeBaseProvider} from 'native-base';
 import {GlobalProvider} from './context/GlobalContext.tsx';
 
 const Tab = createBottomTabNavigator();
@@ -39,10 +38,10 @@ function HomeTabs() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: COLORS.primary,
-          borderTopColor: COLORS.primary,
+          borderTopColor: COLORS.separatorColor,
         },
         tabBarActiveTintColor: 'black',
-        tabBarInactiveTintColor: 'black',
+        tabBarInactiveTintColor: COLORS.secondaryTextColor,
       }}>
       <Tab.Screen
         name="Home"
@@ -112,13 +111,6 @@ function AppStack() {
             options={{
               headerShown: false,
             }}
-            name="ReplyPost"
-            component={ReplyPostView}
-          />
-          <Stack.Screen
-            options={{
-              headerShown: false,
-            }}
             name="SelectCategory"
             component={SelectCategoryView}
           />
@@ -158,6 +150,31 @@ function AppStack() {
 
 function App(): React.JSX.Element {
   const queryClient = new QueryClient();
+  const theme = extendTheme({
+    colors: {
+      // Add new color
+      primary: {
+        50: '#E3F2F9',
+        100: '#C5E4F3',
+        200: '#A2D4EC',
+        300: '#7AC1E4',
+        400: '#47A9DA',
+        500: '#0088CC',
+        600: '#007AB8',
+        700: '#006BA1',
+        800: '#005885',
+        900: '#003F5E',
+      },
+      // Redefining only one shade, rest of the color will remain same.
+      amber: {
+        400: '#d97706',
+      },
+    },
+    config: {
+      // Changing initialColorMode to 'dark'
+      initialColorMode: 'dark',
+    },
+  });
 
   return (
     <NativeBaseProvider>
