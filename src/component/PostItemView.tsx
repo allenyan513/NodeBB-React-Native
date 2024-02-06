@@ -5,6 +5,10 @@ import RenderHTML from 'react-native-render-html';
 import {Avatar} from 'native-base';
 import Icon from 'react-native-vector-icons/AntDesign';
 import COLORS from '../colors.tsx';
+import {calculateTime} from '../utils.tsx';
+import AvatarUserNameAndTimeView from './AvatarUserNameAndTimeView.tsx';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import UpDownVoteView from './UpDownVoteView.tsx';
 
 interface PostItemProps {
   index: number;
@@ -17,8 +21,11 @@ interface PostItemProps {
  * @constructor
  */
 const PostItemView: React.FC<PostItemProps> = ({index, post}) => {
+  const width = useWindowDimensions().width;
   const isFirst = index === 0;
   const isOdd = index % 2 === 0;
+  const onClickUpvote = () => {};
+  const onClickDownVote = () => {};
 
   return (
     <View
@@ -28,34 +35,24 @@ const PostItemView: React.FC<PostItemProps> = ({index, post}) => {
       }}>
       {/*用户头像 & 用户昵称 & 发布时间*/}
       {!isFirst && (
-        <View
-          style={{
-            flexDirection: 'row',
-          }}>
-          <Avatar size={'sm'} source={{uri: post.user.picture}} />
-          <Text> {post.user.username} </Text>
-          <Text> {post.timestampISO} </Text>
-        </View>
+        <AvatarUserNameAndTimeView
+          avatar={post?.user?.picture}
+          username={post?.user.username}
+          timestamp={post?.timestamp}
+        />
       )}
-      <RenderHTML
-        contentWidth={useWindowDimensions().width}
-        source={{html: post.content}}
-      />
+      <RenderHTML contentWidth={width} source={{html: post.content}} />
       {/*toolbar*/}
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-        <View
-          style={{
-            flexDirection: 'row',
-          }}>
-          <Icon name={'up'} />
-          <Icon name={'down'} />
-          <Icon name={'up'} />
-        </View>
-        <Icon name={'up'} />
+        <UpDownVoteView
+          voteCount={post?.votes || 0}
+          onClickUpvote={onClickUpvote}
+          onClickDownVote={onClickDownVote}
+        />
       </View>
     </View>
   );

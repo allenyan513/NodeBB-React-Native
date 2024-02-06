@@ -5,6 +5,7 @@ import {
   ListRenderItem,
   FlatList,
   TouchableWithoutFeedback,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useRef, useState, useContext} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -13,9 +14,9 @@ import PagerView from 'react-native-pager-view';
 import TopicListView from './TopicListView.tsx';
 import {useMMKVObject} from 'react-native-mmkv';
 import {HomeTopTab, User} from '../types.tsx';
-import {Avatar} from 'native-base';
 import CategoryAPI from '../service/categoryAPI.tsx';
 import COLORS from '../colors.tsx';
+import CurrentAvatarView from '../component/CurrentAvatarView.tsx';
 
 const defaultTabs: HomeTopTab[] = [
   {
@@ -116,36 +117,7 @@ const HomeView = () => {
             renderItem={renderTabItem}
           />
         </View>
-        {user && (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            {/*<Icon name={'search1'} size={20} color={'black'} />*/}
-            <TouchableWithoutFeedback
-              onPress={() => {
-                // @ts-ignore
-                navigation.navigate('Setting');
-              }}>
-              <Avatar
-                size={'sm'}
-                source={{
-                  uri: user?.picture,
-                }}
-              />
-            </TouchableWithoutFeedback>
-          </View>
-        )}
-        {!user && (
-          <TouchableOpacity
-            onPress={() => {
-              // @ts-ignore
-              navigation.navigate('SignIn');
-            }}>
-            <Text>Sign In</Text>
-          </TouchableOpacity>
-        )}
+        <CurrentAvatarView />
       </View>
       <PagerView
         style={{flex: 1}}

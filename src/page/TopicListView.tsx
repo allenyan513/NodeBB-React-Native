@@ -1,13 +1,4 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  RefreshControl,
-  ListRenderItem,
-} from 'react-native';
+import {View, FlatList, RefreshControl, ListRenderItem} from 'react-native';
 import React, {useReducer} from 'react';
 
 import {Topic, TopicAction, TopicState} from '../types.tsx';
@@ -17,6 +8,7 @@ import TopicItemView from '../component/TopicItemView.tsx';
 import SeparatorLine from '../component/SeparatorLine.tsx';
 import TopicAPI from '../service/topicAPI.tsx';
 import CategoryAPI from '../service/categoryAPI.tsx';
+import {useGlobalState} from '../context/GlobalContext.tsx';
 
 interface TopicListViewProps {
   cid: string | number;
@@ -25,6 +17,8 @@ interface TopicListViewProps {
 const TopicListView: React.FC<TopicListViewProps> = props => {
   const navigation = useNavigation();
   const route = useRoute();
+
+  const {globalState, dispatch} = useGlobalState();
 
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = React.useState(false);
@@ -42,41 +36,47 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
         const result = await CategoryAPI.getTopics(props.cid);
         topics = result.response.topics;
       }
-      dispatch({type: 'SET_TOPICS', payload: topics});
+      dispatch({
+        type: 'SET_TOPICS',
+        payload: {
+          cid: props.cid,
+          topics: topics,
+        },
+      });
       return topics;
     },
   });
 
-  const initialTopicState: TopicState = {
-    topics: [],
-  };
-
-  const topicReducer = (state: TopicState, action: TopicAction): TopicState => {
-    console.log('topicReducer', action.type);
-    switch (action.type) {
-      case 'SET_TOPICS':
-        return {
-          ...state,
-          topics: action.payload,
-        };
-      case 'UPVOTE':
-      case 'DOWNVOTE':
-        const {tid, delta} = action.payload;
-        return {
-          ...state,
-          topics: state.topics.map(topic => {
-            if (topic.tid === tid) {
-              return {...topic, upvotes: topic.upvotes + delta};
-            }
-            return topic;
-          }),
-        };
-      default:
-        return state;
-    }
-  };
-
-  const [state, dispatch] = useReducer(topicReducer, initialTopicState);
+  // const initialTopicState: TopicState = {
+  //   topics: [],
+  // };
+  //
+  // const topicReducer = (state: TopicState, action: TopicAction): TopicState => {
+  //   console.log('topicReducer', action.type);
+  //   switch (action.type) {
+  //     case 'SET_TOPICS':
+  //       return {
+  //         ...state,
+  //         topics: action.payload,
+  //       };
+  //     case 'UPVOTE':
+  //     case 'DOWNVOTE':
+  //       const {tid, delta} = action.payload;
+  //       return {
+  //         ...state,
+  //         topics: state.topics.map(topic => {
+  //           if (topic.tid === tid) {
+  //             return {...topic, upvotes: topic.upvotes + delta};
+  //           }
+  //           return topic;
+  //         }),
+  //       };
+  //     default:
+  //       return state;
+  //   }
+  // };
+  //
+  // const [state, dispatch] = useReducer(topicReducer, initialTopicState);
 
   const renderSeparator = () => <SeparatorLine />;
   const renderItem: ListRenderItem<Topic> = props => {
@@ -84,7 +84,6 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
       <TopicItemView
         index={props.index}
         topic={props.item}
-        dispatch={dispatch}
         isShowInPostList={false}
       />
     );
@@ -101,7 +100,7 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
   return (
     <View style={{}}>
       <FlatList
-        data={state.topics}
+        data={globalState.topicsMap.get(props.cid)}
         renderItem={renderItem}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

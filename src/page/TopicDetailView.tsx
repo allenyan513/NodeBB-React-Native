@@ -20,6 +20,7 @@ import ReplyPostModal from '../component/ReplyPostModal.tsx';
 import {Asset} from 'react-native-image-picker';
 import AWSHelper from '../service/AWSHepler.tsx';
 import TopicAPI from '../service/topicAPI.tsx';
+import CurrentAvatarView from '../component/CurrentAvatarView.tsx';
 
 interface TopicDetailViewProps {
   // tid: string;
@@ -44,12 +45,46 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
     },
   });
 
+  const ReplyTextInput = () => {
+    return (
+      <View
+        style={{
+          height: 80,
+          padding: 8,
+          backgroundColor: 'white',
+          borderRadius: 10,
+        }}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            // @ts-ignore
+            setModalVisible(true);
+          }}>
+          <View
+            style={{
+              height: 44,
+              backgroundColor: 'lightgray',
+              borderRadius: 10,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingLeft: 10,
+              paddingRight: 10,
+            }}>
+            <Text>Add a comment</Text>
+            <View>
+              <Icon name={'pluscircleo'} size={24} color={'black'} />
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+    );
+  };
+
   const onReplyTopic = async (content: string, assets: Asset[]) => {
     setIsPendingModal(true);
     try {
       // 上传图片
       const urls = await AWSHelper.uploadAssets(assets);
-
       // todo 逻辑抽离
       // 将url拼接到content中 markdown格式 ![]()
       let newContent = '';
@@ -73,16 +108,6 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
     }
   };
 
-  const renderSeparator = () => <SeparatorLine />;
-  const renderHeader = () => (
-    <TopicItemView
-      index={0}
-      topic={data} dispatch={null} isShowInPostList={true} />
-  );
-  const renderItem: ListRenderItem<Post> = props => {
-    return <PostItemView post={props.item} index={props.index} />;
-  };
-
   const onRefresh = async () => {
     setRefreshing(true);
     await queryClient.invalidateQueries({
@@ -91,52 +116,43 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
     setRefreshing(false);
   };
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: '',
+      headerRight: () => {
+        return <CurrentAvatarView />;
+      },
+    });
+  }, []);
+
   return (
     <View style={{flex: 1}}>
+      {/*Topic Header & topic's posts*/}
       <FlatList
         data={data?.posts}
-        renderItem={renderItem}
-        ListHeaderComponent={renderHeader}
+        renderItem={props => {
+          return <PostItemView post={props.item} index={props.index} />;
+        }}
+        ListHeaderComponent={() => {
+          return (
+            <TopicItemView
+              index={0}
+              topic={data}
+              isShowInPostList={true}
+            />
+          );
+        }}
         keyExtractor={item => item.pid.toString()}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        ItemSeparatorComponent={renderSeparator}
+        ItemSeparatorComponent={() => {
+          return <SeparatorLine />;
+        }}
       />
-      {/*reply bar*/}
-      <View
-        style={{
-          height: 80,
-          padding: 8,
-          backgroundColor: 'white',
-          borderRadius: 10,
-        }}>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            // @ts-ignore
-            // navigation.navigate('ReplyPost', {
-            //   tid: tid,
-            // });
-            setModalVisible(true);
-          }}>
-          <View
-            style={{
-              height: 44,
-              backgroundColor: 'lightgray',
-              borderRadius: 10,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingLeft: 10,
-              paddingRight: 10,
-            }}>
-            <Text>Add a comment</Text>
-            <View>
-              <Icon name={'pluscircleo'} size={24} color={'black'} />
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
+      {/*底部回复输入框*/}
+      <ReplyTextInput />
+      {/*回复弹窗*/}
       <ReplyPostModal
         modalVisible={modalVisible}
         isPending={isPendingModal}
