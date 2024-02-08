@@ -58,7 +58,6 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
       <TopicItemView
         index={props.index}
         topic={props.item}
-        isShowInPostList={false}
       />
     );
   };

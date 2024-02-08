@@ -6,7 +6,8 @@ import {MMKV} from 'react-native-mmkv';
 const storage = new MMKV();
 
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.0.130:4567',
+  // baseURL: 'http://192.168.0.130:4567',
+  baseURL: 'https://nodebb-halifax-legxqdbi3q-uc.a.run.app',
   timeout: 30000,
 });
 

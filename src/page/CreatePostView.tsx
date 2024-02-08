@@ -26,7 +26,13 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import {Category, KnowledgeEntity, PostTopicRequest, Topic} from '../types.tsx';
+import {
+  Category,
+  KnowledgeEntity,
+  MultiMedia,
+  PostTopicRequest,
+  Topic,
+} from '../types.tsx';
 import {useMMKV, useMMKVObject} from 'react-native-mmkv';
 import {useNavigation} from '@react-navigation/native';
 import {isEmpty} from '../utils.tsx';
@@ -51,6 +57,7 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const titleTextInputRef = useRef<TextInput>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
 
@@ -58,37 +65,11 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
     useMMKVObject<Category>('default.category');
 
   const mutation = useMutation({
-    mutationFn: async (newData: {
-      title: string;
-      content: string;
-      cid: number;
-    }) => {
-      const newTopic: PostTopicRequest = {
-        title: newData.title,
-        content: newData.content,
-        cid: newData.cid,
-      };
-      const response = await TopicAPI.postTopic(newTopic);
+    mutationFn: async (postTopicRequest: PostTopicRequest) => {
+      const response = await TopicAPI.postTopic(postTopicRequest);
       return response.response;
     },
     onSuccess: (data, variables, context) => {
-      // Alert.alert(
-      //   '发帖成功',
-      //   '',
-      //   [
-      //     {
-      //       text: 'Ok',
-      //       onPress: () => {
-      //         navigation.goBack();
-      //         // // @ts-ignore
-      //         // navigation.navigate('TopicDetail', {
-      //         //   tid: data?.tid,
-      //         // });
-      //       },
-      //     },
-      //   ],
-      //   {cancelable: false},
-      // );
       Toast.show({
         description: '发布成功',
       });
@@ -117,13 +98,15 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
       return;
     }
 
-    //如果有图片，先上传图片，然后获取urlList
-    let appendContent = '';
+    setIsUploading(true);
+
+    const multiMedia: MultiMedia = {
+      images: [],
+      videos: [],
+      audios: [],
+    };
     if (selectedAssets.length > 0) {
-      //上传所有图片，获取urlList
-      let s3UrlList = [];
       for (let i = 0; i < selectedAssets.length; i++) {
-        console.log(`uploading...${i}`);
         const asset = selectedAssets[i];
         const s3Url = await AWSHelper.uploadFile(
           // @ts-ignore
@@ -131,21 +114,20 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
           asset.fileName,
           asset.type,
         );
-        s3UrlList.push(s3Url);
-      }
-      // 遍历 s3UrlList 在content 前面插入 ![url](url)
-      for (let i = 0; i < s3UrlList.length; i++) {
-        appendContent += `![${s3UrlList[i]}](${s3UrlList[i]})\n\n`;
+        multiMedia.images.push(s3Url);
       }
     } else {
       console.log('no image');
     }
-
-    mutation.mutate({
-      title: title,
-      content: appendContent + content,
+    const postTopicRequest: PostTopicRequest = {
       cid: defaultCategory.cid,
-    });
+      title: title,
+      content: content,
+      multimedia: multiMedia,
+    };
+    console.log('postTopicRequest', postTopicRequest);
+    setIsUploading(false);
+    mutation.mutate(postTopicRequest);
   };
 
   useEffect(() => {
@@ -173,7 +155,7 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
           <Button
             paddingX={24}
             borderRadius={8}
-            isLoading={mutation.isPending}
+            isLoading={mutation.isPending || isUploading}
             isDisabled={!isEnablePublish}
             isLoadingText={'发布中'}
             colorScheme={'error'}

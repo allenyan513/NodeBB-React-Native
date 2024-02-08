@@ -141,6 +141,13 @@ export interface PostTopicRequest {
   content: string;
   timestamp?: number;
   tags?: string[];
+  multimedia?: MultiMedia;
+}
+
+export interface MultiMedia {
+  images: string[];
+  videos: string[];
+  audios: string[];
 }
 
 export interface Topic {
@@ -148,6 +155,7 @@ export interface Topic {
   uid: number;
   cid: number;
   title: string;
+  content: string; //帖子内容前200
   slug: string;
   mainPid: number;
   postcount: number;
@@ -186,6 +194,7 @@ export interface Topic {
   thumb: string;
   index: number;
   topicThumb: string; //主题首张图
+  multimedia: MultiMedia; //多媒体资源
 }
 
 export interface Post {
@@ -204,6 +213,9 @@ export interface Post {
   category: Category;
   isMainPost: boolean;
   replies: number;
+
+  title: string; //当第一个帖子是主题帖时，title为主题帖标题
+  multimedia: MultiMedia; //多媒体资源
 }
 
 export interface Tag {

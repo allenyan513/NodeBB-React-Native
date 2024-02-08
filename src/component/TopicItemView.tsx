@@ -1,5 +1,5 @@
 import {Alert, Image, Text, TouchableWithoutFeedback, View} from 'react-native';
-import {Topic, TopicAction} from '../types.tsx';
+import {MultiMedia, Topic, TopicAction} from '../types.tsx';
 import Icon from 'react-native-vector-icons/AntDesign';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -9,15 +9,35 @@ import VerticalSeparatorLine from './VerticalSeparatorLine.tsx';
 import AvatarUserNameAndTimeView from './AvatarUserNameAndTimeView.tsx';
 import {useGlobalState} from '../context/GlobalContext.tsx';
 import UpDownVoteView from './UpDownVoteView.tsx';
+import PagerView from 'react-native-pager-view';
+import TopicListView from '../page/TopicListView.tsx';
 
 interface TopicItemProps {
   index: number;
   topic: Topic | undefined;
-  /**
-   * 是否在帖子列表中显示
-   */
-  isShowInPostList?: boolean;
 }
+
+const MultiMediaView: React.FC<{multiMedia: MultiMedia | undefined}> = ({
+  multiMedia,
+}) => {
+  if (!multiMedia || !multiMedia.images || multiMedia.images.length === 0) {
+    return <View />;
+  }
+  return (
+    <View style={{height: 150}}>
+      <Image
+        style={{
+          height: 150,
+          width: 150,
+          borderRadius: 8,
+          marginRight: 8,
+          marginBottom: 8,
+        }}
+        src={multiMedia.images[0]}
+      />
+    </View>
+  );
+};
 
 /**
  * 主题列表项
@@ -25,11 +45,7 @@ interface TopicItemProps {
  * @param dispatch
  * @constructor
  */
-const TopicItemView: React.FC<TopicItemProps> = ({
-  index,
-  topic,
-  isShowInPostList,
-}) => {
+const TopicItemView: React.FC<TopicItemProps> = ({index, topic}) => {
   const {globalState, dispatch} = useGlobalState();
   const navigation = useNavigation();
   const isOdd = index % 2 === 0;
@@ -129,74 +145,81 @@ const TopicItemView: React.FC<TopicItemProps> = ({
             {topic?.category.name}
           </Text>
         </View>
-        {/*标题*/}
-        <Text
+
+        <View
           style={{
-            fontSize: 16,
-            fontWeight: 'bold',
-            color: COLORS.primaryTextColor,
             marginBottom: 8,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
           }}>
-          {topic?.title}
-        </Text>
-        {/* 主题首图：存在主题首图 且 不是在帖子中展示*/}
-        {topic?.topicThumb && !isShowInPostList && (
-          <Image
-            style={{
-              height: 200,
-              width: 200,
-              borderRadius: 8,
-              marginBottom: 12,
-            }}
-            src={topic?.topicThumb}
-          />
-        )}
+          <View style={{}}>
+            {/*标题*/}
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: COLORS.primaryTextColor,
+                marginBottom: 8,
+              }}>
+              {topic?.title}
+            </Text>
+
+            {/*内容*/}
+            <Text
+              style={{
+                fontSize: 14,
+                color: COLORS.secondaryTextColor,
+              }}>
+              {topic?.content}
+            </Text>
+          </View>
+          <MultiMediaView multiMedia={topic?.multimedia} />
+        </View>
+
         {/*toolbar*/}
-        {!isShowInPostList && (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          {/*upvote & downvote*/}
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'space-between',
             }}>
-            {/*upvote & downvote*/}
+            <UpDownVoteView
+              voteCount={topic?.votes || 0}
+              onClickUpvote={onClickUpvote}
+              onClickDownVote={onClickDownVote}
+            />
+
             <View
               style={{
                 flexDirection: 'row',
+                alignItems: 'center',
+                borderWidth: 1,
+                borderColor: COLORS.separatorColor,
+                borderRadius: 20,
+                marginRight: 10,
+                paddingLeft: 12,
+                paddingRight: 12,
+                paddingTop: 8,
+                paddingBottom: 8,
+                backgroundColor: COLORS.third,
               }}>
-              <UpDownVoteView
-                voteCount={topic?.votes || 0}
-                onClickUpvote={onClickUpvote}
-                onClickDownVote={onClickDownVote}
-              />
-
-              <View
+              <Icon name={'retweet'} size={20} />
+              <Text
                 style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  borderWidth: 1,
-                  borderColor: COLORS.separatorColor,
-                  borderRadius: 20,
-                  marginRight: 10,
-                  paddingLeft: 12,
-                  paddingRight: 12,
-                  paddingTop: 8,
-                  paddingBottom: 8,
-                  backgroundColor: COLORS.third,
+                  marginLeft: 6,
                 }}>
-                <Icon name={'retweet'} size={20} />
-                <Text
-                  style={{
-                    marginLeft: 6,
-                  }}>
-                  {topic?.postcount}
-                </Text>
-              </View>
+                {topic?.postcount}
+              </Text>
             </View>
-
-            {/*分享*/}
-            {/*<Icon name={'up'} />*/}
           </View>
-        )}
+
+          {/*分享*/}
+          {/*<Icon name={'up'} />*/}
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );

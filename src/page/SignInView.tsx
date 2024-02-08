@@ -18,7 +18,7 @@ const SignInView = () => {
 
   return (
     <ImageBackground
-      source={require('../assets/signin1.png')}
+      source={require('../assets/lighthouse.webp')}
       resizeMode={'cover'}
       style={{
         flex: 1,
@@ -134,7 +134,7 @@ const SignInView = () => {
               // @ts-ignore
               navigation.navigate('MyWebView', {
                 title: 'Privacy policy',
-                uri: 'https://mist-2c0b9.web.app/privacy-policy.html',
+                uri: 'https://nodebb-app.web.app/privacy_policy.html',
               });
             }}
             style={{
@@ -149,8 +149,8 @@ const SignInView = () => {
             onPress={() => {
               // @ts-ignore
               navigation.navigate('MyWebView', {
-                title: 'Terms of service',
-                uri: 'https://mist-2c0b9.web.app/terms-of-service.html',
+                title: 'User agreement',
+                uri: 'https://nodebb-app.web.app/user_agreement.html',
               });
             }}
             style={{
@@ -159,7 +159,7 @@ const SignInView = () => {
               textAlign: 'left',
               marginLeft: 10,
             }}>
-            Terms of service
+            User agreement
           </Text>
         </View>
       </LinearGradient>

@@ -161,16 +161,13 @@ const SettingView = () => {
             onPress={() => {
               // @ts-ignore
               navigation.navigate('MyWebView', {
-                title: 'Privacy policy',
-                uri: 'https://mist-2c0b9.web.app/privacy-policy.html',
+                title: 'Privacy Policy',
+                uri: 'https://nodebb-app.web.app/privacy_policy.html',
               });
             }}>
             <View style={styles.itemContainer}>
               <Text style={styles.itemTitle}>Privacy policy</Text>
-              <Image
-                style={styles.arrowRight}
-                source={require('../assets/right-white.png')}
-              />
+              <Icon name={'right'} size={24} color={COLORS.primaryTextColor} />
             </View>
           </TouchableOpacity>
           <View style={styles.separatorLine} />
@@ -178,16 +175,27 @@ const SettingView = () => {
             onPress={() => {
               // @ts-ignore
               navigation.navigate('MyWebView', {
-                title: 'Terms of service',
-                uri: 'https://mist-2c0b9.web.app/terms-of-service.html',
+                title: 'Content Policy',
+                uri: 'https://nodebb-app.web.app/content_policy.html',
+              });
+            }}>
+            <View style={styles.itemContainer}>
+              <Text style={styles.itemTitle}>Privacy policy</Text>
+              <Icon name={'right'} size={24} color={COLORS.primaryTextColor} />
+            </View>
+          </TouchableOpacity>
+          <View style={styles.separatorLine} />
+          <TouchableOpacity
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate('MyWebView', {
+                title: 'User Agreement',
+                uri: 'https://nodebb-app.web.app/user_argreement.html',
               });
             }}>
             <View style={styles.itemContainer}>
               <Text style={styles.itemTitle}>Terms of service</Text>
-              <Image
-                style={styles.arrowRight}
-                source={require('../assets/right-white.png')}
-              />
+              <Icon name={'right'} size={24} color={COLORS.primaryTextColor} />
             </View>
           </TouchableOpacity>
         </View>

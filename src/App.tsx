@@ -89,7 +89,7 @@ function AppStack() {
       <Stack.Navigator>
         <Stack.Group>
           <Stack.Screen
-            name="Home"
+            name="HomeTabs"
             component={HomeTabs}
             options={{
               headerShown: false,

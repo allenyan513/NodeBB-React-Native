@@ -41,6 +41,12 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
     queryKey: ['/api/v3/topic/:tid', tid],
     queryFn: async () => {
       const result = await TopicAPI.getTopic(tid);
+      console.log(result);
+
+      // assign title multiple to first post
+      result.posts[0].title = result.title;
+      result.posts[0].multimedia = result.multimedia;
+
       return result;
     },
   });
@@ -144,11 +150,23 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
         renderItem={props => {
           return <PostItemView post={props.item} index={props.index} />;
         }}
-        ListHeaderComponent={() => {
-          return (
-            <TopicItemView index={0} topic={data} isShowInPostList={true} />
-          );
-        }}
+        // ListHeaderComponent={() => {
+        //   return (
+        //     <View
+        //       style={{
+        //         backgroundColor: 'white',
+        //       }}>
+        //       {/*<TopicItemView index={0} topic={data} isShowInPostList={true} />*/}
+        //       <Text
+        //         style={{
+        //           fontSize: 20,
+        //           padding: 8,
+        //         }}>
+        //         {data?.title}
+        //       </Text>
+        //     </View>
+        //   );
+        // }}
         keyExtractor={item => item.pid.toString()}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

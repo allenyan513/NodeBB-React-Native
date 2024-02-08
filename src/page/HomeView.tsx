@@ -35,7 +35,6 @@ const HomeView = () => {
   const navigation = useNavigation();
   const [user, setUser] = useMMKVObject<User>('user');
   const [topTabs, setTopTabs] = useState<HomeTopTab[]>(defaultTabs);
-  const flatListRef = useRef<FlatList | null>(null);
   const pagerViewRef = useRef<PagerView | null>(null);
   const query = useQuery({
     queryKey: ['/api/v3/categories'],
@@ -63,8 +62,6 @@ const HomeView = () => {
         return tab;
       });
       setTopTabs(newTabs);
-      console.log('scrollToIndex', props.index);
-      flatListRef?.current?.scrollToIndex({index: props.index});
       pagerViewRef?.current?.setPage(props.index);
     };
     return (
@@ -115,7 +112,6 @@ const HomeView = () => {
             justifyContent: 'center',
           }}>
           <FlatList
-            ref={flatListRef}
             horizontal={true}
             data={topTabs}
             showsHorizontalScrollIndicator={false}
