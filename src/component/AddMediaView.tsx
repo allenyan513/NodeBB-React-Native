@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import COLORS from '../colors.tsx';
 import React, {useEffect, useState} from 'react';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
+import {useTranslation} from 'react-i18next';
 
 interface AddMediaViewProps {
   style?: StyleProp<ViewStyle>;
@@ -19,6 +20,7 @@ interface AddMediaViewProps {
 }
 
 const AddMediaView: React.FC<AddMediaViewProps> = props => {
+  const {t} = useTranslation();
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
 
   const onClickLaunchPicker = async () => {
@@ -28,11 +30,10 @@ const AddMediaView: React.FC<AddMediaViewProps> = props => {
       } else if (response.errorCode) {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else {
-        console.log('response', response);
         //判断如果图片超过9张，就不添加了
         // @ts-ignore
         if (selectedAssets.length + response.assets.length > 9) {
-          Alert.alert('最多只能选择9张图片');
+          Alert.alert(t('No more than 9 pictures'));
           return;
         }
         // @ts-ignore
@@ -53,13 +54,13 @@ const AddMediaView: React.FC<AddMediaViewProps> = props => {
       <TouchableOpacity
         onLongPress={() => {
           //remove
-          Alert.alert('是否移除这张图片?', '', [
+          Alert.alert(t('Do you want to remove this picture?'), '', [
             {
-              text: 'Cancel',
+              text: t('Cancel'),
               onPress: () => {},
             },
             {
-              text: 'Ok',
+              text: t('OK'),
               onPress: () => {
                 setSelectedAssets(prevState => {
                   return prevState.filter(asset => asset.uri !== item.uri);
@@ -120,8 +121,6 @@ const AddMediaView: React.FC<AddMediaViewProps> = props => {
         />
       </View>
       <FlatList
-        style={{
-        }}
         data={selectedAssets}
         horizontal={true}
         keyExtractor={(item, index) => index.toString()}

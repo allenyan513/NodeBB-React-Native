@@ -11,8 +11,10 @@ import {useNavigation} from '@react-navigation/native';
 import {AppleButton} from '@invertase/react-native-apple-authentication';
 import LinearGradient from 'react-native-linear-gradient';
 import {useAuth} from '../context/AuthContext.tsx';
+import {useTranslation} from 'react-i18next';
 
 const SignInView = () => {
+  const {t} = useTranslation();
   const navigation = useNavigation();
   const {googleSignIn, appleSignIn} = useAuth();
 
@@ -133,23 +135,37 @@ const SignInView = () => {
             onPress={() => {
               // @ts-ignore
               navigation.navigate('MyWebView', {
-                title: 'Privacy policy',
+                title: t('Content Policy'),
+                uri: 'https://nodebb-app.web.app/content_poliy.html',
+              });
+            }}
+            style={{
+              flex: 1,
+              textAlign: 'right',
+              color: COLORS.secondaryTextColor,
+            }}>
+            {t('Content Policy')}
+          </Text>
+          <Text
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate('MyWebView', {
+                title: t('Privacy Policy'),
                 uri: 'https://nodebb-app.web.app/privacy_policy.html',
               });
             }}
             style={{
               flex: 1,
               color: COLORS.secondaryTextColor,
-              textAlign: 'right',
-              marginRight: 10,
+              textAlign: 'center',
             }}>
-            Privacy policy
+            {t('Privacy Policy')}
           </Text>
           <Text
             onPress={() => {
               // @ts-ignore
               navigation.navigate('MyWebView', {
-                title: 'User agreement',
+                title: t('User Agreement'),
                 uri: 'https://nodebb-app.web.app/user_agreement.html',
               });
             }}
@@ -157,9 +173,8 @@ const SignInView = () => {
               flex: 1,
               color: COLORS.secondaryTextColor,
               textAlign: 'left',
-              marginLeft: 10,
             }}>
-            User agreement
+            {t('User Agreement')}
           </Text>
         </View>
       </LinearGradient>

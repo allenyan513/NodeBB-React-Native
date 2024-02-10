@@ -26,12 +26,16 @@ import CreatePostView from './page/CreatePostView.tsx';
 import SelectCategoryView from './page/SelectCategoryView.tsx';
 import NotificationsView from './page/NotificationsView.tsx';
 import {extendTheme, NativeBaseProvider} from 'native-base';
+import {useTranslation} from 'react-i18next';
 import {GlobalProvider} from './context/GlobalContext.tsx';
+import './i18n.js';
+;
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function HomeTabs() {
+  const {t} = useTranslation();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -44,10 +48,10 @@ function HomeTabs() {
         tabBarInactiveTintColor: COLORS.secondaryTextColor,
       }}>
       <Tab.Screen
-        name="Home"
+        name="HomeView"
         component={HomeView}
         options={{
-          tabBarLabel: '首页',
+          tabBarLabel: t('Home'),
           tabBarIcon: ({color, size}) => (
             <Icon name="home" size={24} color={color} />
           ),
@@ -57,7 +61,7 @@ function HomeTabs() {
         name="publish"
         component={HomeView}
         options={{
-          tabBarLabel: '发布',
+          tabBarLabel: t('Publish'),
           tabBarIcon: ({color, size}) => (
             <Icon name="pluscircleo" size={24} color={color} />
           ),
@@ -73,7 +77,7 @@ function HomeTabs() {
         name="Thread"
         component={NotificationsView}
         options={{
-          tabBarLabel: '通知',
+          tabBarLabel: t('Notification'),
           tabBarIcon: ({color, size}) => (
             <Icon name="message1" size={24} color={color} />
           ),
@@ -89,7 +93,7 @@ function AppStack() {
       <Stack.Navigator>
         <Stack.Group>
           <Stack.Screen
-            name="HomeTabs"
+            name="Home"
             component={HomeTabs}
             options={{
               headerShown: false,

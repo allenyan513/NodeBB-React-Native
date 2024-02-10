@@ -4,19 +4,22 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {Avatar} from 'native-base';
+import {Avatar, Button} from 'native-base';
 import React from 'react';
 import {useAuth} from '../context/AuthContext.tsx';
 import {useNavigation} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
 
 const CurrentAvatarView = () => {
-  const {currentUser, user} = useAuth();
+  const {t} = useTranslation();
+  const {user} = useAuth();
   const navigation = useNavigation();
   return (
     <View
       style={{
         flexDirection: 'row',
         alignItems: 'center',
+        padding: 10,
       }}>
       {user && (
         <TouchableWithoutFeedback
@@ -34,13 +37,15 @@ const CurrentAvatarView = () => {
         </TouchableWithoutFeedback>
       )}
       {!user && (
-        <TouchableOpacity
+        <Button
+          size={'sm'}
+          colorScheme={'green'}
           onPress={() => {
             // @ts-ignore
             navigation.navigate('SignIn');
           }}>
-          <Text>Sign In</Text>
-        </TouchableOpacity>
+          {t('Sign In')}
+        </Button>
       )}
     </View>
   );

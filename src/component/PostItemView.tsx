@@ -2,18 +2,16 @@ import {Image, Text, useWindowDimensions, View} from 'react-native';
 import {Post, Topic} from '../types.tsx';
 import React from 'react';
 import RenderHTML from 'react-native-render-html';
-import {AspectRatio, Avatar} from 'native-base';
-import Icon from 'react-native-vector-icons/AntDesign';
+import {AspectRatio} from 'native-base';
 import COLORS from '../colors.tsx';
-import {calculateTime} from '../utils.tsx';
 import AvatarUserNameAndTimeView from './AvatarUserNameAndTimeView.tsx';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import UpDownVoteView from './UpDownVoteView.tsx';
 import PagerView from 'react-native-pager-view';
 
 interface PostItemProps {
   index: number;
   post: Post;
+  onClickVote: (action: string, post: Post) => void;
 }
 
 /**
@@ -21,12 +19,9 @@ interface PostItemProps {
  * @param post
  * @constructor
  */
-const PostItemView: React.FC<PostItemProps> = ({index, post}) => {
+const PostItemView: React.FC<PostItemProps> = ({index, post, onClickVote}) => {
   const width = useWindowDimensions().width;
   const isFirst = index === 0;
-  const isOdd = index % 2 === 0;
-  const onClickUpvote = () => {};
-  const onClickDownVote = () => {};
 
   const hasMultiMedia = post?.multimedia?.images?.length > 0;
 
@@ -59,8 +54,7 @@ const PostItemView: React.FC<PostItemProps> = ({index, post}) => {
             md: 1 / 1,
           }}
           width={'100%'}>
-          <PagerView
-            initialPage={0} orientation={'horizontal'}>
+          <PagerView initialPage={0} orientation={'horizontal'}>
             {post?.multimedia?.images?.map((image, index) => {
               return (
                 <Image
@@ -86,8 +80,12 @@ const PostItemView: React.FC<PostItemProps> = ({index, post}) => {
         }}>
         <UpDownVoteView
           voteCount={post?.votes || 0}
-          onClickUpvote={onClickUpvote}
-          onClickDownVote={onClickDownVote}
+          onClickUpvote={() => {
+            onClickVote('upvote', post);
+          }}
+          onClickDownVote={() => {
+            onClickVote('downvote', post);
+          }}
         />
       </View>
     </View>

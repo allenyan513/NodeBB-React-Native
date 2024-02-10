@@ -15,6 +15,7 @@ import COLORS from '../colors.tsx';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import ImagePickPreView from './ImagePickPreView.tsx';
+import {useTranslation} from 'react-i18next';
 
 interface ReplyPostModalProps {
   modalVisible: boolean;
@@ -24,6 +25,7 @@ interface ReplyPostModalProps {
 }
 
 const ReplyPostModal: React.FC<ReplyPostModalProps> = props => {
+  const {t} = useTranslation();
   const [textInputValue, setTextInputValue] = useState<string>('');
   const textInputRef = useRef<TextInput>(null);
   const isSendButtonDisabled = textInputValue.length === 0;
@@ -37,10 +39,9 @@ const ReplyPostModal: React.FC<ReplyPostModalProps> = props => {
       } else if (response.errorCode) {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else {
-        console.log('response', response);
         // @ts-ignore
         if (selectedAssets.length + response.assets.length > 3) {
-          Alert.alert('回复最多只能选3张图片');
+          Alert.alert(t('No more than 3 pictures'));
           return;
         }
         // @ts-ignore
@@ -74,7 +75,6 @@ const ReplyPostModal: React.FC<ReplyPostModalProps> = props => {
       visible={props.modalVisible}
       onRequestClose={() => {
         props.onClosed();
-        // props.setModalVisible(!props.modalVisible);
       }}>
       <TouchableOpacity
         style={styles.modalOverlay}
@@ -86,7 +86,7 @@ const ReplyPostModal: React.FC<ReplyPostModalProps> = props => {
           style={styles.keyboardAvoidingView}>
           <View style={styles.container} onStartShouldSetResponder={() => true}>
             <TextInput
-              placeholder="Ask anything..."
+              placeholder={t('Reply to this post')}
               placeholderTextColor={'#666'}
               ref={textInputRef}
               value={textInputValue}
@@ -171,8 +171,6 @@ const ReplyPostModal: React.FC<ReplyPostModalProps> = props => {
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
   keyboardAvoidingView: {
     flex: 1,

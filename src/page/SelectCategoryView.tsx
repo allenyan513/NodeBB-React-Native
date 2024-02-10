@@ -1,9 +1,7 @@
 import {
   Text,
   View,
-  StyleSheet,
   TouchableOpacity,
-  Image,
   FlatList,
   ListRenderItem,
 } from 'react-native';
@@ -15,14 +13,14 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import CategoryAPI from '../service/categoryAPI.tsx';
 import HeaderView from '../component/HeaderView.tsx';
 import Icon from 'react-native-vector-icons/AntDesign';
+import {useTranslation} from 'react-i18next';
 
 interface CreatePostViewProps {}
 
 const CreatePostView: React.FC<CreatePostViewProps> = props => {
-  const queryClient = useQueryClient();
+  const {t} = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
-  const [refreshing, setRefreshing] = React.useState(false);
 
   const {isPending, isError, error, data} = useQuery({
     queryKey: ['/api/v3/categories'],
@@ -48,13 +46,6 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
             alignItems: 'center',
             height: 50,
           }}>
-          {/*<Image*/}
-          {/*  source={{uri: item.icon}}*/}
-          {/*  style={{*/}
-          {/*    width: 50,*/}
-          {/*    height: 50,*/}
-          {/*  }}*/}
-          {/*/>*/}
           <Text
             style={{
               marginLeft: 24,
@@ -81,7 +72,7 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
             }}
           />
         }
-        title={'选择版块'}
+        title={t('Select Category')}
       />
       <FlatList
         style={{}}

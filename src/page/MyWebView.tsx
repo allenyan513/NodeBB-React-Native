@@ -6,11 +6,6 @@ import WebView from 'react-native-webview';
 import HeaderView from '../component/HeaderView.tsx';
 import Icon from 'react-native-vector-icons/AntDesign';
 
-interface MyWebViewProps {
-  title: string;
-  uri: string;
-}
-
 const MyWebView = () => {
   const navigation = useNavigation();
   const router = useRoute();
@@ -47,11 +42,4 @@ const MyWebView = () => {
     </View>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.secondary,
-    padding: 15,
-  },
-});
 export default MyWebView;

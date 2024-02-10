@@ -3,19 +3,9 @@ import {MultiMedia, Topic, TopicAction} from '../types.tsx';
 import Icon from 'react-native-vector-icons/AntDesign';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
-import PostAPI from '../service/postAPI.tsx';
 import COLORS from '../colors.tsx';
-import VerticalSeparatorLine from './VerticalSeparatorLine.tsx';
 import AvatarUserNameAndTimeView from './AvatarUserNameAndTimeView.tsx';
-import {useGlobalState} from '../context/GlobalContext.tsx';
 import UpDownVoteView from './UpDownVoteView.tsx';
-import PagerView from 'react-native-pager-view';
-import TopicListView from '../page/TopicListView.tsx';
-
-interface TopicItemProps {
-  index: number;
-  topic: Topic | undefined;
-}
 
 const MultiMediaView: React.FC<{multiMedia: MultiMedia | undefined}> = ({
   multiMedia,
@@ -39,74 +29,29 @@ const MultiMediaView: React.FC<{multiMedia: MultiMedia | undefined}> = ({
   );
 };
 
+interface TopicItemProps {
+  index: number;
+  topic: Topic | undefined;
+  onClickVote: (action: string, topic: Topic | undefined) => void;
+}
 /**
  * 主题列表项
  * @param topic
  * @param dispatch
  * @constructor
  */
-const TopicItemView: React.FC<TopicItemProps> = ({index, topic}) => {
-  const {globalState, dispatch} = useGlobalState();
+const TopicItemView: React.FC<TopicItemProps> = ({
+  index,
+  topic,
+  onClickVote,
+}) => {
   const navigation = useNavigation();
-  const isOdd = index % 2 === 0;
 
   const onClickItem = () => {
-    console.log('onClickItem', topic?.tid);
     // @ts-ignore
     navigation.navigate('TopicDetail', {
       tid: topic?.tid,
     });
-  };
-
-  const onClickUpvote = async () => {
-    if (topic?.mainPid === undefined) {
-      Alert.alert('Error', 'mainPid is undefined');
-      return;
-    }
-    try {
-      //先更新本地数据
-      dispatch({
-        type: 'UPVOTE_TOPIC',
-        payload: {
-          tid: topic?.tid,
-        },
-      });
-      await PostAPI.vote(topic?.mainPid, 1);
-    } catch (e) {
-      console.error(e);
-      //如果失败，恢复本地数据
-      dispatch({
-        type: 'DOWNVOTE_TOPIC',
-        payload: {
-          tid: topic?.tid,
-        },
-      });
-    }
-  };
-  const onClickDownVote = async () => {
-    if (topic?.mainPid === undefined) {
-      Alert.alert('Error', 'mainPid is undefined');
-      return;
-    }
-    try {
-      //先更新本地数据
-      dispatch({
-        type: 'DOWNVOTE_TOPIC',
-        payload: {
-          tid: topic?.tid,
-        },
-      });
-      await PostAPI.vote(topic?.mainPid, -1);
-    } catch (e) {
-      console.error(e);
-      //如果失败，恢复本地数据
-      dispatch({
-        type: 'UPVOTE_TOPIC',
-        payload: {
-          tid: topic?.tid,
-        },
-      });
-    }
   };
 
   return (
@@ -189,8 +134,12 @@ const TopicItemView: React.FC<TopicItemProps> = ({index, topic}) => {
             }}>
             <UpDownVoteView
               voteCount={topic?.votes || 0}
-              onClickUpvote={onClickUpvote}
-              onClickDownVote={onClickDownVote}
+              onClickUpvote={() => {
+                onClickVote('upvote', topic);
+              }}
+              onClickDownVote={() => {
+                onClickVote('downvote', topic);
+              }}
             />
 
             <View

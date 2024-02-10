@@ -1,12 +1,7 @@
 import {
   Text,
   View,
-  StyleSheet,
   TouchableOpacity,
-  Image,
-  FlatList,
-  RefreshControl,
-  ListRenderItem,
   TextInput,
   ScrollView,
   Alert,
@@ -14,25 +9,10 @@ import {
 import React, {useEffect, useRef, useState, useContext} from 'react';
 import COLORS from '../colors.tsx';
 import {Button, Toast} from 'native-base';
-import {
-  isCancelledError,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {
-  Asset,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
-import {
-  Category,
-  KnowledgeEntity,
-  MultiMedia,
-  PostTopicRequest,
-  Topic,
-} from '../types.tsx';
+import {Asset} from 'react-native-image-picker';
+import {Category, MultiMedia, PostTopicRequest} from '../types.tsx';
 import {useMMKV, useMMKVObject} from 'react-native-mmkv';
 import {useNavigation} from '@react-navigation/native';
 import {isEmpty} from '../utils.tsx';
@@ -41,6 +21,7 @@ import TopicAPI from '../service/topicAPI.tsx';
 import HeaderView from '../component/HeaderView.tsx';
 import SeparatorLine from '../component/SeparatorLine.tsx';
 import AddMediaView from '../component/AddMediaView.tsx';
+import {useTranslation} from 'react-i18next';
 
 interface CreatePostViewProps {}
 
@@ -50,17 +31,13 @@ interface CreatePostViewProps {}
  * @constructor
  */
 const CreatePostView: React.FC<CreatePostViewProps> = props => {
-  const queryClient = useQueryClient();
+  const {t} = useTranslation();
   const navigation = useNavigation();
-  const [refreshing, setRefreshing] = React.useState(false);
-
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const titleTextInputRef = useRef<TextInput>(null);
   const [isUploading, setIsUploading] = useState(false);
-
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
-
   const [defaultCategory, setDefaultCategory] =
     useMMKVObject<Category>('default.category');
 
@@ -71,13 +48,13 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
     },
     onSuccess: (data, variables, context) => {
       Toast.show({
-        description: '发布成功',
+        description: t('Post success'),
       });
       navigation.goBack();
     },
     onError: (error, variables, context) => {
       console.error(error);
-      Alert.alert('发布失败');
+      Alert.alert(t('Post failed'));
     },
   });
 
@@ -85,21 +62,10 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
     !isEmpty(title) && !isEmpty(content) && defaultCategory !== undefined;
 
   const onClickPublish = async () => {
-    if (isEmpty(title)) {
-      Alert.alert('请补充标题');
+    if (!isEnablePublish) {
       return;
     }
-    if (isEmpty(content)) {
-      Alert.alert('请补充内容');
-      return;
-    }
-    if (defaultCategory === undefined) {
-      Alert.alert('请选择分类');
-      return;
-    }
-
     setIsUploading(true);
-
     const multiMedia: MultiMedia = {
       images: [],
       videos: [],
@@ -125,7 +91,6 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
       content: content,
       multimedia: multiMedia,
     };
-    console.log('postTopicRequest', postTopicRequest);
     setIsUploading(false);
     mutation.mutate(postTopicRequest);
   };
@@ -153,14 +118,14 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
         }
         rightButton={
           <Button
-            paddingX={24}
             borderRadius={8}
+            size={'sm'}
             isLoading={mutation.isPending || isUploading}
             isDisabled={!isEnablePublish}
-            isLoadingText={'发布中'}
-            colorScheme={'error'}
+            isLoadingText={t('Publishing')}
+            colorScheme={'green'}
             onPress={onClickPublish}>
-            发布
+            {t('Publish')}
           </Button>
         }
       />
@@ -181,7 +146,7 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
           }}
           ref={titleTextInputRef}
           numberOfLines={1}
-          placeholder="标题"
+          placeholder={t('Title')}
           placeholderTextColor={COLORS.secondaryTextColor}
           onChangeText={text => setTitle(text)}
         />
@@ -196,7 +161,7 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
             marginBottom: 12,
           }}
           multiline={true}
-          placeholder="内容"
+          placeholder={t('What do you want to say?')}
           placeholderTextColor={COLORS.secondaryTextColor}
           onChangeText={text => setContent(text)}
         />
@@ -220,7 +185,6 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
             // @ts-ignore
             navigation.navigate('SelectCategory', {
               onGoBack: (category: Category) => {
-                console.log('onGoBack', category.cid);
                 setDefaultCategory(category);
               },
             });
@@ -237,9 +201,11 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
                 fontSize: 14,
                 color: COLORS.primaryTextColor,
               }}>
-              分类版块
+              {t('Select Category')}
             </Text>
-            <Text>{defaultCategory ? defaultCategory.name : '未选择 >'}</Text>
+            <Text>
+              {defaultCategory ? defaultCategory.name : t('No selected')}
+            </Text>
           </View>
         </TouchableOpacity>
       </ScrollView>

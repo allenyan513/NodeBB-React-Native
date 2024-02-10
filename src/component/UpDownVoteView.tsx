@@ -1,6 +1,11 @@
 import COLORS from '../colors.tsx';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import {
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import VerticalSeparatorLine from './VerticalSeparatorLine.tsx';
 import React from 'react';
 

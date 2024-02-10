@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import React, {useRef, useState} from 'react';
 import COLORS from '../colors.tsx';
+import {useTranslation} from 'react-i18next';
 
 interface HeaderView2Props {
   style?: StyleProp<ViewStyle>;

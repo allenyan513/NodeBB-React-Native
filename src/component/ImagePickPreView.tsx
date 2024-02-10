@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useRef, useState, useContext} from 'react';
 import {Asset} from 'react-native-image-picker';
+import {useTranslation} from 'react-i18next';
 
 interface ImagePickPreViewProps {
   assets: Asset[];
@@ -15,18 +16,19 @@ interface ImagePickPreViewProps {
 }
 
 const ImagePickPreView: React.FC<ImagePickPreViewProps> = props => {
+  const {t} = useTranslation();
   const renderItem: ListRenderItem<Asset> = ({item}) => {
     return (
       <TouchableOpacity
         onLongPress={() => {
           //remove
-          Alert.alert('是否移除这张图片?', '', [
+          Alert.alert(t('Do you want to remove this picture?'), '', [
             {
-              text: 'Cancel',
+              text: t('Cancel'),
               onPress: () => {},
             },
             {
-              text: 'Ok',
+              text: t('OK'),
               onPress: () => {
                 const newAssets = props.assets.filter(
                   asset => asset.uri !== item.uri,

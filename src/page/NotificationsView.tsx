@@ -1,20 +1,18 @@
 import {View, FlatList, RefreshControl, ListRenderItem} from 'react-native';
 import React, {useEffect, useRef, useState, useContext} from 'react';
 
-import {Notification} from '../types.tsx';
-import {useNavigation, useRoute} from '@react-navigation/native';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import SeparatorLine from '../component/SeparatorLine.tsx';
 import NotificationItemView from '../component/NotificationItemView.tsx';
 import UserAPI from '../service/userAPI.tsx';
 import HeaderView from '../component/HeaderView.tsx';
+import {useTranslation} from 'react-i18next';
+import EmptyView from '../component/EmptyView.tsx';
 
 interface NotificationsViewProps {}
 
 const NotificationsView: React.FC<NotificationsViewProps> = props => {
-  const navigation = useNavigation();
-  const route = useRoute();
-
+  const {t} = useTranslation();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = React.useState(false);
   const {isPending, isError, error, data} = useQuery({
@@ -42,7 +40,7 @@ const NotificationsView: React.FC<NotificationsViewProps> = props => {
         style={{
           marginTop: 44,
         }}
-        title={'通知'}
+        title={t('Notification')}
       />
       <View
         style={{
@@ -63,6 +61,9 @@ const NotificationsView: React.FC<NotificationsViewProps> = props => {
           }
           ItemSeparatorComponent={() => {
             return <SeparatorLine />;
+          }}
+          ListEmptyComponent={() => {
+            return <EmptyView />;
           }}
         />
       </View>

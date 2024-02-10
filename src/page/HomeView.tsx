@@ -1,11 +1,9 @@
 import {
   Text,
   View,
-  TouchableOpacity,
   ListRenderItem,
   FlatList,
   TouchableWithoutFeedback,
-  StatusBar,
 } from 'react-native';
 import React, {useEffect, useRef, useState, useContext} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -17,25 +15,26 @@ import {HomeTopTab, User} from '../types.tsx';
 import CategoryAPI from '../service/categoryAPI.tsx';
 import COLORS from '../colors.tsx';
 import CurrentAvatarView from '../component/CurrentAvatarView.tsx';
-
-const defaultTabs: HomeTopTab[] = [
-  {
-    cid: 'recent',
-    name: '最新',
-    selected: false,
-  },
-  {
-    cid: 'popular',
-    name: '热门',
-    selected: false,
-  },
-];
+import {useTranslation} from 'react-i18next';
 
 const HomeView = () => {
-  const navigation = useNavigation();
-  const [user, setUser] = useMMKVObject<User>('user');
-  const [topTabs, setTopTabs] = useState<HomeTopTab[]>(defaultTabs);
   const pagerViewRef = useRef<PagerView | null>(null);
+  const {t} = useTranslation();
+
+  const defaultTabs: HomeTopTab[] = [
+    {
+      cid: 'recent',
+      name: t('Recent'),
+      selected: false,
+    },
+    {
+      cid: 'popular',
+      name: t('Popular'),
+      selected: false,
+    },
+  ];
+  const [topTabs, setTopTabs] = useState<HomeTopTab[]>(defaultTabs);
+
   const query = useQuery({
     queryKey: ['/api/v3/categories'],
     queryFn: async () => {
@@ -48,9 +47,9 @@ const HomeView = () => {
           selected: false,
         });
       }
-      setTopTabs(prevState => {
-        return [...prevState, ...appendTopTabs];
-      });
+      // setTopTabs(prevState => {
+      //   return [...prevState, ...appendTopTabs];
+      // });
       return result.response.categories;
     },
   });

@@ -10,9 +10,11 @@ import {
 import React, {useEffect, useRef, useState} from 'react';
 
 import {Route, useNavigation, useRoute} from '@react-navigation/native';
-import {useQuery, useQueryClient} from '@tanstack/react-query';
-import TopicItemView from '../component/TopicItemView.tsx';
-import SeparatorLine from '../component/SeparatorLine.tsx';
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import PostItemView from '../component/PostItemView.tsx';
 import Icon from 'react-native-vector-icons/AntDesign';
 import ReplyPostModal from '../component/ReplyPostModal.tsx';
@@ -21,12 +23,19 @@ import AWSHelper from '../service/AWSHepler.tsx';
 import TopicAPI from '../service/topicAPI.tsx';
 import CurrentAvatarView from '../component/CurrentAvatarView.tsx';
 import COLORS from '../colors.tsx';
+import {useTranslation} from 'react-i18next';
+import {Post, Topic} from '../types.tsx';
+import CategoryAPI from '../service/categoryAPI.tsx';
+import TopicItemView from '../component/TopicItemView.tsx';
+import LoadingMoreView from '../component/LoadingMore.tsx';
+import NoMoreDataView from '../component/NoMoreDataView.tsx';
 
 interface TopicDetailViewProps {
   // tid: string;
 }
 
 const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
+  const {t} = useTranslation();
   const route = useRoute();
   const navigation = useNavigation();
   // @ts-ignore
@@ -36,18 +45,35 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [isPendingModal, setIsPendingModal] = useState(false);
+  const [posts, setPosts] = useState<Post[]>([]);
 
-  const {isPending, isError, error, data} = useQuery({
+  // @ts-ignore
+  const fetchData = async params => {
+    const result = await TopicAPI.getTopic(tid, params.pageParam);
+    // assign title multiple to first post
+    result.posts[0].title = result.title;
+    result.posts[0].multimedia = result.multimedia;
+    return result;
+  };
+
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
     queryKey: ['/api/v3/topic/:tid', tid],
-    queryFn: async () => {
-      const result = await TopicAPI.getTopic(tid);
-      console.log(result);
-
-      // assign title multiple to first post
-      result.posts[0].title = result.title;
-      result.posts[0].multimedia = result.multimedia;
-
-      return result;
+    queryFn: fetchData,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      // todo 20是服务端的一个固定值
+      if (lastPage.posts.length !== 20) {
+        return undefined;
+      }
+      return lastPageParam + 1;
     },
   });
 
@@ -82,7 +108,7 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
               style={{
                 color: COLORS.secondaryTextColor,
               }}>
-              Add a comment
+              {t('Add a comment')}
             </Text>
             <View>
               <Icon
@@ -109,16 +135,15 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
         newContent += `![${url}](${url})\n`;
       });
       newContent += content;
-
       // @ts-ignore
       const response = await TopicAPI.replyTopic(tid, newContent, null);
       await queryClient.invalidateQueries({
         queryKey: ['/api/v3/topics/:tid', tid],
       });
-      Alert.alert('Reply success');
+      Alert.alert(t('Reply success'));
     } catch (e) {
       console.error(e);
-      Alert.alert('Reply failed');
+      Alert.alert(t('Reply failed'));
     } finally {
       setIsPendingModal(false);
       setModalVisible(false);
@@ -133,6 +158,70 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
     setRefreshing(false);
   };
 
+  const renderFooter = () => {
+    if (hasNextPage) {
+      if (isFetchingNextPage) {
+        return <LoadingMoreView />;
+      } else {
+        return null;
+      }
+    } else {
+      return <NoMoreDataView />;
+    }
+  };
+
+  const onClickVote = async (action: string, post: Post | undefined) => {
+    if (post === undefined) {
+      return;
+    }
+    try {
+      if (action === 'upvote') {
+        setPosts(prevState => {
+          return prevState.map(item => {
+            if (item.pid === post.pid) {
+              item.votes++;
+            }
+            return item;
+          });
+        });
+        await TopicAPI.vote(post.pid, 1);
+      } else if (action === 'downvote') {
+        setPosts(prevState => {
+          return prevState.map(item => {
+            if (item.pid === post.pid) {
+              item.votes--;
+            }
+            return item;
+          });
+        });
+        await TopicAPI.vote(post.pid, -1);
+      } else {
+      }
+    } catch (e) {
+      console.error(e);
+      if (action === 'upvote') {
+        setPosts(prevState => {
+          return prevState.map(item => {
+            if (item.pid === post.pid) {
+              item.votes--;
+            }
+            return item;
+          });
+        });
+      } else if (action === 'downvote') {
+        setPosts(prevState => {
+          return prevState.map(item => {
+            if (item.pid === post.pid) {
+              item.votes++;
+            }
+            return item;
+          });
+        });
+      } else {
+      }
+    }
+  };
+
   useEffect(() => {
     navigation.setOptions({
       title: '',
@@ -142,31 +231,29 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
     });
   }, []);
 
+  useEffect(() => {
+    const posts = data?.pages.map(page => page.posts).flat();
+    setPosts(posts || []);
+  }, [data]);
+
   return (
     <View style={{flex: 1}}>
       {/*Topic Header & topic's posts*/}
       <FlatList
-        data={data?.posts}
-        renderItem={props => {
-          return <PostItemView post={props.item} index={props.index} />;
+        data={posts}
+        onEndReached={() => {
+          fetchNextPage();
         }}
-        // ListHeaderComponent={() => {
-        //   return (
-        //     <View
-        //       style={{
-        //         backgroundColor: 'white',
-        //       }}>
-        //       {/*<TopicItemView index={0} topic={data} isShowInPostList={true} />*/}
-        //       <Text
-        //         style={{
-        //           fontSize: 20,
-        //           padding: 8,
-        //         }}>
-        //         {data?.title}
-        //       </Text>
-        //     </View>
-        //   );
-        // }}
+        onEndReachedThreshold={1}
+        renderItem={props => {
+          return (
+            <PostItemView
+              post={props.item}
+              index={props.index}
+              onClickVote={onClickVote}
+            />
+          );
+        }}
         keyExtractor={item => item.pid.toString()}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -181,6 +268,7 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
             />
           );
         }}
+        ListFooterComponent={renderFooter}
       />
       {/*底部回复输入框*/}
       <ReplyTextInput />

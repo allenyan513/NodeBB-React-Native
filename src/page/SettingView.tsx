@@ -16,8 +16,10 @@ import {Avatar, Button} from 'native-base';
 import UserAPI from '../service/userAPI.tsx';
 import HeaderView from '../component/HeaderView.tsx';
 import Icon from 'react-native-vector-icons/AntDesign';
+import {useTranslation} from 'react-i18next';
 
 const SettingView = () => {
+  const {t} = useTranslation();
   const navigation = useNavigation();
   const {currentUser, user, refreshVerifyTokenAndUser, signOut, deleteUser} =
     useAuth();
@@ -26,7 +28,7 @@ const SettingView = () => {
     try {
       const uid = user?.uid;
       if (uid === undefined) {
-        Alert.alert('Error', 'User is not found');
+        Alert.alert(t('Error'), t('Failed to upload avatar'));
         return;
       }
       const s3Url = await AWSHelper.uploadFile(
@@ -37,9 +39,9 @@ const SettingView = () => {
       );
       await UserAPI.updateUserPicture(uid, s3Url);
       await refreshVerifyTokenAndUser();
-      Alert.alert('Success', 'Avatar updated');
+      Alert.alert(t('Success'), t('Upload avatar success'));
     } catch (e) {
-      Alert.alert('Error', 'Failed to upload avatar');
+      Alert.alert(t('Error'), t('Failed to upload avatar'));
     }
   };
 
@@ -59,34 +61,34 @@ const SettingView = () => {
 
   const onClickSignOut = async () => {
     await signOut();
-    console.log('User signed out!');
     navigation.goBack();
   };
 
   const onClickDeleteAccount = () => {
     Alert.alert(
-      'Delete Account',
-      'Are you sure you want to delete your account?',
+      t('Delete Account'),
+      t('Are you sure you want to delete your account?'),
       [
         {
-          text: 'Cancel',
+          text: t('Cancel'),
           style: 'cancel',
         },
         {
-          text: 'Delete',
+          text: t('Delete'),
           onPress: async () => {
             try {
               await deleteUser();
             } catch (error) {
-              console.log('error', error);
               // @ts-ignore
               if (error.code === 'auth/requires-recent-login') {
                 Alert.alert(
-                  'Dangerous action',
-                  'This operation is sensitive and requires recent authentication. Please sign in again to delete your account.',
+                  t('Dangerous action'),
+                  t(
+                    'This operation is sensitive and requires recent authentication. Please sign in again to delete your account.',
+                  ),
                   [
                     {
-                      text: 'OK',
+                      text: t('OK'),
                       onPress: () => {
                         onClickSignOut();
                       },
@@ -106,7 +108,7 @@ const SettingView = () => {
   return (
     <View style={{flex: 1}}>
       <HeaderView
-        title={'设置'}
+        title={t('Setting')}
         leftButton={
           <Icon
             name={'left'}
@@ -119,15 +121,15 @@ const SettingView = () => {
         }
       />
       <View style={styles.container}>
-        <Text style={styles.title}>个人信息</Text>
+        <Text style={styles.title}>{t('Account')}</Text>
         <View style={styles.groupContainer}>
           <View style={styles.itemContainer}>
-            <Text style={styles.itemTitle}>昵称</Text>
+            <Text style={styles.itemTitle}>{t('UserName')}</Text>
             <Text style={styles.itemContent}>{user?.username}</Text>
           </View>
           <TouchableOpacity onPress={onClickChangeAvatar}>
             <View style={styles.itemContainer}>
-              <Text style={styles.itemTitle}>头像</Text>
+              <Text style={styles.itemTitle}>{t('Avatar')}</Text>
 
               <View
                 style={{
@@ -139,7 +141,7 @@ const SettingView = () => {
                   variant="unstyled"
                   colorScheme={'primary'}
                   onPress={onClickChangeAvatar}>
-                  更换头像
+                  {t('Change Avatar')}
                 </Button>
                 <Avatar
                   size={'sm'}
@@ -151,11 +153,11 @@ const SettingView = () => {
             </View>
           </TouchableOpacity>
           <View style={styles.itemContainer}>
-            <Text style={styles.itemTitle}>Email</Text>
+            <Text style={styles.itemTitle}>{t('Email')}</Text>
             <Text style={styles.itemContent}>{currentUser?.email}</Text>
           </View>
         </View>
-        <Text style={styles.title}>关于</Text>
+        <Text style={styles.title}>{t('About')}</Text>
         <View style={styles.groupContainer}>
           <TouchableOpacity
             onPress={() => {
@@ -166,7 +168,7 @@ const SettingView = () => {
               });
             }}>
             <View style={styles.itemContainer}>
-              <Text style={styles.itemTitle}>Privacy policy</Text>
+              <Text style={styles.itemTitle}>{t('Privacy Policy')}</Text>
               <Icon name={'right'} size={24} color={COLORS.primaryTextColor} />
             </View>
           </TouchableOpacity>
@@ -180,7 +182,7 @@ const SettingView = () => {
               });
             }}>
             <View style={styles.itemContainer}>
-              <Text style={styles.itemTitle}>Privacy policy</Text>
+              <Text style={styles.itemTitle}>{t('Content Policy')}</Text>
               <Icon name={'right'} size={24} color={COLORS.primaryTextColor} />
             </View>
           </TouchableOpacity>
@@ -190,11 +192,11 @@ const SettingView = () => {
               // @ts-ignore
               navigation.navigate('MyWebView', {
                 title: 'User Agreement',
-                uri: 'https://nodebb-app.web.app/user_argreement.html',
+                uri: 'https://nodebb-app.web.app/user_agreement.html',
               });
             }}>
             <View style={styles.itemContainer}>
-              <Text style={styles.itemTitle}>Terms of service</Text>
+              <Text style={styles.itemTitle}>{'User Agreement'}</Text>
               <Icon name={'right'} size={24} color={COLORS.primaryTextColor} />
             </View>
           </TouchableOpacity>
@@ -203,7 +205,7 @@ const SettingView = () => {
         <View style={styles.groupContainer}>
           <TouchableOpacity onPress={onClickSignOut}>
             <View style={styles.itemContainer}>
-              <Text style={styles.itemTitle}>登出</Text>
+              <Text style={styles.itemTitle}>{t('Sign Out')}</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -217,7 +219,7 @@ const SettingView = () => {
                     color: 'red',
                   },
                 ]}>
-                删除帐户
+                {t('Delete Account')}
               </Text>
             </View>
           </TouchableOpacity>

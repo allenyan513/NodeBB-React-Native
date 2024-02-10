@@ -6,17 +6,19 @@ import {useNavigation} from '@react-navigation/native';
 import {useAuth} from '../context/AuthContext.tsx';
 import HeaderView from '../component/HeaderView.tsx';
 import Icon from 'react-native-vector-icons/AntDesign';
+import {useTranslation} from 'react-i18next';
 
 const EmailSignInView = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const {emailSignIn} = useAuth();
+  const {t} = useTranslation();
 
   const onClickSignIn = async () => {
     try {
       await emailSignIn(email, password);
-      Alert.alert('Success', 'Sign in success');
+      Alert.alert(t('Success'), t('Sign in success'));
       navigation.goBack();
     } catch (e) {
       console.error(e);
@@ -30,7 +32,7 @@ const EmailSignInView = () => {
         backgroundColor: COLORS.primary,
       }}>
       <HeaderView
-        title={'邮件登录'}
+        title={t('Sign In with Email')}
         leftButton={
           <Icon
             name={'left'}
@@ -51,7 +53,7 @@ const EmailSignInView = () => {
             color: COLORS.primaryTextColor,
             marginBottom: 10,
           }}>
-          Email
+          {t('Email')}
         </Text>
         <TextInput
           multiline={false}
@@ -77,7 +79,7 @@ const EmailSignInView = () => {
             color: COLORS.primaryTextColor,
             marginBottom: 10,
           }}>
-          Password
+          {t('Password')}
         </Text>
         <TextInput
           multiline={false}
@@ -95,7 +97,7 @@ const EmailSignInView = () => {
         />
       </View>
       <View>
-        <Button title="Sign In" onPress={onClickSignIn} />
+        <Button title={t('Sign In')} onPress={onClickSignIn} />
       </View>
     </View>
   );

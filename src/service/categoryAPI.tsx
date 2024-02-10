@@ -12,14 +12,15 @@ const CategoryAPI = {
    *
    * @param cid
    */
-  getTopics: async function (cid: string | number) {
-    const res = await axiosInstance.get(`/api/v3/categories/${cid}/topics`);
+  getTopics: async function (
+    cid: string | number,
+    page: number = 1,
+    pageSize: number = 10,
+  ) {
+    const res = await axiosInstance.get(
+      `/api/v3/categories/${cid}/topics?page=${page}&pageSize=${pageSize}`,
+    );
     return res.data as NodeBBResponse<CategoriesTopicsResponse>;
-  },
-
-  getTopicPosts: async function (cid: number) {
-    const res = await axiosInstance.get(`/api/v3/categories/${cid}/posts`);
-    return res.data as NodeBBResponse<CategoriesPostsResponse>;
   },
 
   getCategories: async function () {
@@ -27,6 +28,10 @@ const CategoryAPI = {
     return response.data as NodeBBResponse<CategoriesResponse>;
   },
 
+  getTopicPosts: async function (cid: number) {
+    const res = await axiosInstance.get(`/api/v3/categories/${cid}/posts`);
+    return res.data as NodeBBResponse<CategoriesPostsResponse>;
+  },
   getCategoryByCid: async function (cid: number) {
     const res = await axiosInstance.get(`/api/v3/categories/${cid}`);
     return res.data as NodeBBResponse<Category>;
