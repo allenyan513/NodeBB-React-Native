@@ -2,19 +2,14 @@ import {
   View,
   FlatList,
   RefreshControl,
-  ListRenderItem,
   Text,
   TouchableWithoutFeedback,
   Alert,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 
-import {Route, useNavigation, useRoute} from '@react-navigation/native';
-import {
-  useInfiniteQuery,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query';
 import PostItemView from '../component/PostItemView.tsx';
 import Icon from 'react-native-vector-icons/AntDesign';
 import ReplyPostModal from '../component/ReplyPostModal.tsx';
@@ -24,11 +19,10 @@ import TopicAPI from '../service/topicAPI.tsx';
 import CurrentAvatarView from '../component/CurrentAvatarView.tsx';
 import COLORS from '../colors.tsx';
 import {useTranslation} from 'react-i18next';
-import {Post, Topic} from '../types.tsx';
-import CategoryAPI from '../service/categoryAPI.tsx';
-import TopicItemView from '../component/TopicItemView.tsx';
+import {Post} from '../types.tsx';
 import LoadingMoreView from '../component/LoadingMore.tsx';
 import NoMoreDataView from '../component/NoMoreDataView.tsx';
+import {Toast} from 'native-base';
 
 interface TopicDetailViewProps {
   // tid: string;
@@ -43,12 +37,14 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = React.useState(false);
 
+  const flatListRef = useRef<FlatList>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [isPendingModal, setIsPendingModal] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
 
   // @ts-ignore
   const fetchData = async params => {
+    console.log('fetchData', params);
     const result = await TopicAPI.getTopic(tid, params.pageParam);
     // assign title multiple to first post
     result.posts[0].title = result.title;
@@ -65,7 +61,7 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ['/api/v3/topic/:tid', tid],
+    queryKey: [`/api/v3/topics/${tid}`],
     queryFn: fetchData,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
@@ -137,10 +133,14 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
       newContent += content;
       // @ts-ignore
       const response = await TopicAPI.replyTopic(tid, newContent, null);
-      await queryClient.invalidateQueries({
-        queryKey: ['/api/v3/topics/:tid', tid],
+      await queryClient.refetchQueries({
+        queryKey: [`/api/v3/topics/${tid}`],
       });
-      Alert.alert(t('Reply success'));
+      flatListRef.current?.scrollToEnd({animated: true});
+      // Alert.alert(t('Reply success'));
+      Toast.show({
+        description: t('Reply success'),
+      });
     } catch (e) {
       console.error(e);
       Alert.alert(t('Reply failed'));
@@ -151,9 +151,10 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
   };
 
   const onRefresh = async () => {
+    console.log('onRefresh00');
     setRefreshing(true);
     await queryClient.invalidateQueries({
-      queryKey: ['/api/v3/topics/:tid', tid],
+      queryKey: [`/api/v3/topics/${tid}`],
     });
     setRefreshing(false);
   };
@@ -240,6 +241,7 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
     <View style={{flex: 1}}>
       {/*Topic Header & topic's posts*/}
       <FlatList
+        ref={flatListRef}
         data={posts}
         onEndReached={() => {
           fetchNextPage();
@@ -279,8 +281,8 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
         onClosed={() => {
           setModalVisible(false);
         }}
-        onSend={(content, assets) => {
-          onReplyTopic(content, assets);
+        onSend={async (content, assets) => {
+          await onReplyTopic(content, assets);
         }}
       />
     </View>

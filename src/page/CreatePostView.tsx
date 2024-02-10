@@ -13,7 +13,7 @@ import {useMutation, useQueryClient} from '@tanstack/react-query';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {Asset} from 'react-native-image-picker';
 import {Category, MultiMedia, PostTopicRequest} from '../types.tsx';
-import {useMMKV, useMMKVObject} from 'react-native-mmkv';
+import {useMMKVObject} from 'react-native-mmkv';
 import {useNavigation} from '@react-navigation/native';
 import {isEmpty} from '../utils.tsx';
 import AWSHelper from '../service/AWSHepler.tsx';
@@ -50,7 +50,12 @@ const CreatePostView: React.FC<CreatePostViewProps> = props => {
       Toast.show({
         description: t('Post success'),
       });
+      //关闭这个页面，打开主题详情页 TopicDetailView topic.tid
       navigation.goBack();
+      // @ts-ignore
+      navigation.navigate('TopicDetail', {
+        tid: data.tid,
+      });
     },
     onError: (error, variables, context) => {
       console.error(error);

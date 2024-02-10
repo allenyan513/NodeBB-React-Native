@@ -19,6 +19,7 @@ axiosInstance.interceptors.request.use(
       config.headers.idToken = idToken;
     }
     const verifyToken = storage.getString('user.verifyToken');
+    // console.log('verifyToken', verifyToken);
     if (verifyToken) {
       config.headers.Authorization = `Bearer ${verifyToken}`;
     }

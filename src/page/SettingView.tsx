@@ -169,7 +169,7 @@ const SettingView = () => {
             }}>
             <View style={styles.itemContainer}>
               <Text style={styles.itemTitle}>{t('Privacy Policy')}</Text>
-              <Icon name={'right'} size={24} color={COLORS.primaryTextColor} />
+              <Icon name={'right'} size={20} color={COLORS.primaryTextColor} />
             </View>
           </TouchableOpacity>
           <View style={styles.separatorLine} />
@@ -183,7 +183,7 @@ const SettingView = () => {
             }}>
             <View style={styles.itemContainer}>
               <Text style={styles.itemTitle}>{t('Content Policy')}</Text>
-              <Icon name={'right'} size={24} color={COLORS.primaryTextColor} />
+              <Icon name={'right'} size={20} color={COLORS.primaryTextColor} />
             </View>
           </TouchableOpacity>
           <View style={styles.separatorLine} />
@@ -196,8 +196,8 @@ const SettingView = () => {
               });
             }}>
             <View style={styles.itemContainer}>
-              <Text style={styles.itemTitle}>{'User Agreement'}</Text>
-              <Icon name={'right'} size={24} color={COLORS.primaryTextColor} />
+              <Text style={styles.itemTitle}>{t('User Agreement')}</Text>
+              <Icon name={'right'} size={20} color={COLORS.primaryTextColor} />
             </View>
           </TouchableOpacity>
         </View>

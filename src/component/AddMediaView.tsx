@@ -107,18 +107,18 @@ const AddMediaView: React.FC<AddMediaViewProps> = props => {
           color={COLORS.primaryTextColor}
           onPress={onClickLaunchPicker}
         />
-        <Icon
-          style={{
-            padding: 12,
-            borderWidth: 1,
-            borderRadius: 6,
-            borderColor: 'lightgray',
-          }}
-          name={'camera'}
-          size={24}
-          color={COLORS.primaryTextColor}
-          onPress={() => {}}
-        />
+        {/*<Icon*/}
+        {/*  style={{*/}
+        {/*    padding: 12,*/}
+        {/*    borderWidth: 1,*/}
+        {/*    borderRadius: 6,*/}
+        {/*    borderColor: 'lightgray',*/}
+        {/*  }}*/}
+        {/*  name={'camera'}*/}
+        {/*  size={24}*/}
+        {/*  color={COLORS.primaryTextColor}*/}
+        {/*  onPress={() => {}}*/}
+        {/*/>*/}
       </View>
       <FlatList
         data={selectedAssets}

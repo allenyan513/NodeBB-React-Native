@@ -47,9 +47,9 @@ const HomeView = () => {
           selected: false,
         });
       }
-      // setTopTabs(prevState => {
-      //   return [...prevState, ...appendTopTabs];
-      // });
+      setTopTabs(prevState => {
+        return [...prevState, ...appendTopTabs];
+      });
       return result.response.categories;
     },
   });

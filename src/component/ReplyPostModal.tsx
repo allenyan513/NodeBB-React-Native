@@ -16,12 +16,13 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import ImagePickPreView from './ImagePickPreView.tsx';
 import {useTranslation} from 'react-i18next';
+import settingView from "../page/SettingView.tsx";
 
 interface ReplyPostModalProps {
   modalVisible: boolean;
   isPending: boolean;
   onClosed: () => void;
-  onSend: (content: string, assets: Asset[]) => void;
+  onSend: (content: string, assets: Asset[]) => Promise<void>;
 }
 
 const ReplyPostModal: React.FC<ReplyPostModalProps> = props => {
@@ -53,11 +54,13 @@ const ReplyPostModal: React.FC<ReplyPostModalProps> = props => {
     });
   };
 
-  const onClickSend = () => {
+  const onClickSend = async () => {
     if (isSendButtonDisabled) {
       return;
     }
-    props.onSend(textInputValue, selectedAssets);
+    await props.onSend(textInputValue, selectedAssets);
+    setTextInputValue('');
+    setSelectedAssets([]);
   };
 
   useEffect(() => {
@@ -119,18 +122,18 @@ const ReplyPostModal: React.FC<ReplyPostModalProps> = props => {
                   color={COLORS.primaryTextColor}
                   onPress={onClickLaunchPicker}
                 />
-                <Icon
-                  style={{
-                    padding: 12,
-                    borderWidth: 1,
-                    borderRadius: 6,
-                    borderColor: 'lightgray',
-                  }}
-                  name={'camera'}
-                  size={24}
-                  color={COLORS.primaryTextColor}
-                  onPress={() => {}}
-                />
+                {/*<Icon*/}
+                {/*  style={{*/}
+                {/*    padding: 12,*/}
+                {/*    borderWidth: 1,*/}
+                {/*    borderRadius: 6,*/}
+                {/*    borderColor: 'lightgray',*/}
+                {/*  }}*/}
+                {/*  name={'camera'}*/}
+                {/*  size={24}*/}
+                {/*  color={COLORS.primaryTextColor}*/}
+                {/*  onPress={() => {}}*/}
+                {/*/>*/}
               </View>
 
               {props.isPending ? (

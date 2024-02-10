@@ -29,6 +29,7 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
 
   // @ts-ignore
   const fetchData = async params => {
+    // console.log('fetchData', params);
     let topics: Topic[] = [];
     if (props.cid === 'recent') {
       const result = await TopicAPI.getRecentTopics(params.pageParam, pageSize);
@@ -77,7 +78,7 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
   const onRefresh = async () => {
     setRefreshing(true);
     await queryClient.invalidateQueries({
-      queryKey: ['/api/v3/categories/:cid/topics' + props.cid],
+      queryKey: ['/api/v3/categories/:cid/topics/' + props.cid],
     });
     setRefreshing(false);
   };
@@ -164,7 +165,7 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
       <FlatList
         data={displayData}
         onEndReached={() => {
-          console.log('onEndReached');
+          // console.log('onEndReached');
           fetchNextPage();
         }}
         onEndReachedThreshold={1}
