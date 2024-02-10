@@ -29,13 +29,14 @@ import {extendTheme, NativeBaseProvider} from 'native-base';
 import {useTranslation} from 'react-i18next';
 import {GlobalProvider} from './context/GlobalContext.tsx';
 import './i18n.js';
-;
+import TopicListView from './page/TopicListView.tsx';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function HomeTabs() {
   const {t} = useTranslation();
+  const {currentUser, checkSignIn} = useAuth();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -69,7 +70,9 @@ function HomeTabs() {
         listeners={({navigation}) => ({
           tabPress: e => {
             e.preventDefault();
-            navigation.navigate('CreatePost');
+            if (checkSignIn()) {
+              navigation.navigate('CreatePost');
+            }
           },
         })}
       />
@@ -89,66 +92,65 @@ function HomeTabs() {
 
 function AppStack() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Group>
-          <Stack.Screen
-            name="Home"
-            component={HomeTabs}
-            options={{
-              headerShown: false,
-            }}
-          />
-        </Stack.Group>
-        <Stack.Group>
-          <Stack.Screen name={'TopicDetail'} component={TopicDetailView} />
-        </Stack.Group>
-        <Stack.Group screenOptions={{presentation: 'modal'}}>
-          <Stack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name="CreatePost"
-            component={CreatePostView}
-          />
-          <Stack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name="SelectCategory"
-            component={SelectCategoryView}
-          />
-          <Stack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name={'Setting'}
-            component={SettingView}
-          />
-          <Stack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name={'SignIn'}
-            component={SignInView}
-          />
-          <Stack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name={'MyWebView'}
-            component={MyWebView}
-          />
-          <Stack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name={'EmailSignIn'}
-            component={EmailSignInView}
-          />
-        </Stack.Group>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Group>
+        <Stack.Screen
+          name=" "
+          component={HomeTabs}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack.Group>
+      <Stack.Group>
+        <Stack.Screen name={'TopicDetail'} component={TopicDetailView} />
+        <Stack.Screen name={'TopicList'} component={TopicListView} />
+      </Stack.Group>
+      <Stack.Group screenOptions={{presentation: 'modal'}}>
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name="CreatePost"
+          component={CreatePostView}
+        />
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name="SelectCategory"
+          component={SelectCategoryView}
+        />
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name={'Setting'}
+          component={SettingView}
+        />
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name={'SignIn'}
+          component={SignInView}
+        />
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name={'MyWebView'}
+          component={MyWebView}
+        />
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name={'EmailSignIn'}
+          component={EmailSignInView}
+        />
+      </Stack.Group>
+    </Stack.Navigator>
   );
 }
 
@@ -183,11 +185,13 @@ function App(): React.JSX.Element {
   return (
     <NativeBaseProvider>
       <QueryClientProvider client={queryClient}>
-        <GlobalProvider>
-          <AuthProvider>
-            <AppStack />
-          </AuthProvider>
-        </GlobalProvider>
+        <NavigationContainer>
+          <GlobalProvider>
+            <AuthProvider>
+              <AppStack />
+            </AuthProvider>
+          </GlobalProvider>
+        </NavigationContainer>
       </QueryClientProvider>
     </NativeBaseProvider>
   );

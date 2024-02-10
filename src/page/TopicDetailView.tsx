@@ -23,6 +23,7 @@ import {Post} from '../types.tsx';
 import LoadingMoreView from '../component/LoadingMore.tsx';
 import NoMoreDataView from '../component/NoMoreDataView.tsx';
 import {Toast} from 'native-base';
+import {useAuth} from '../context/AuthContext.tsx';
 
 interface TopicDetailViewProps {
   // tid: string;
@@ -41,10 +42,11 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
   const [modalVisible, setModalVisible] = useState(false);
   const [isPendingModal, setIsPendingModal] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
+  const {checkSignIn} = useAuth();
 
   // @ts-ignore
   const fetchData = async params => {
-    console.log('fetchData', params);
+    // console.log('fetchData', params);
     const result = await TopicAPI.getTopic(tid, params.pageParam);
     // assign title multiple to first post
     result.posts[0].title = result.title;
@@ -86,8 +88,10 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
         }}>
         <TouchableWithoutFeedback
           onPress={() => {
-            // @ts-ignore
-            setModalVisible(true);
+            if (checkSignIn()) {
+              // @ts-ignore
+              setModalVisible(true);
+            }
           }}>
           <View
             style={{
@@ -233,7 +237,11 @@ const TopicDetailView: React.FC<TopicDetailViewProps> = props => {
   }, []);
 
   useEffect(() => {
-    const posts = data?.pages.map(page => page.posts).flat();
+    //
+    let posts = data?.pages.map(page => page.posts).flat();
+    posts = posts?.filter(item => {
+      return !item.deleted;
+    });
     setPosts(posts || []);
   }, [data]);
 

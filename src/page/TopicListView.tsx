@@ -16,25 +16,40 @@ import CategoryAPI from '../service/categoryAPI.tsx';
 import EmptyView from '../component/EmptyView.tsx';
 import LoadingMoreView from '../component/LoadingMore.tsx';
 import NoMoreDataView from '../component/NoMoreDataView.tsx';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import CurrentAvatarView from '../component/CurrentAvatarView.tsx';
 
 interface TopicListViewProps {
-  cid: string | number;
+  cid?: string | number;
+  title?: string | null;
 }
 
 const TopicListView: React.FC<TopicListViewProps> = props => {
+  const navigation = useNavigation();
+  const route = useRoute();
   const [displayData, setDisplayData] = React.useState<Topic[]>([]);
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = React.useState(false);
-  const pageSize = 4;
+  const pageSize = 20;
+
+  // @ts-ignore
+  const cid = props.cid || route.params?.cid;
+  // @ts-ignore
+  const title = props.title || route.params?.title || '';
+  navigation.setOptions({
+    title: title,
+    headerRight: () => {
+      return <CurrentAvatarView />;
+    },
+  });
 
   // @ts-ignore
   const fetchData = async params => {
-    // console.log('fetchData', params);
     let topics: Topic[] = [];
-    if (props.cid === 'recent') {
+    if (cid === 'recent') {
       const result = await TopicAPI.getRecentTopics(params.pageParam, pageSize);
       topics = result.topics;
-    } else if (props.cid === 'popular') {
+    } else if (cid === 'popular') {
       const result = await TopicAPI.getPopularTopics(
         params.pageParam,
         pageSize,
@@ -42,16 +57,17 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
       topics = result.topics;
     } else {
       const result = await CategoryAPI.getTopics(
-        props.cid,
+        cid,
         params.pageParam,
         pageSize,
       );
       topics = result.response.topics;
     }
-    //过滤已经被删除的帖子
-    topics = topics.filter(item => {
-      return !item.deleted;
-    });
+    // console.log('topics', topics.length);
+    // //过滤已经被删除的帖子
+    // topics = topics.filter(item => {
+    //   return !item.deleted;
+    // });
     return topics;
   };
 
@@ -64,21 +80,23 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ['/api/v3/categories/:cid/topics/' + props.cid],
+    queryKey: ['/api/v3/categories/:cid/topics/' + cid],
     queryFn: fetchData,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      console.log('lastPage', lastPage.length, pageSize);
       if (lastPage.length !== pageSize) {
         return undefined;
       }
       return lastPageParam + 1;
     },
   });
+  console.log('status', hasNextPage, status);
 
   const onRefresh = async () => {
     setRefreshing(true);
     await queryClient.invalidateQueries({
-      queryKey: ['/api/v3/categories/:cid/topics/' + props.cid],
+      queryKey: ['/api/v3/categories/:cid/topics/' + cid],
     });
     setRefreshing(false);
   };
@@ -152,9 +170,21 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
   };
 
   useEffect(() => {
-    const topics = data?.pages.reduce((acc, val) => acc.concat(val), []);
+    let topics = data?.pages.reduce((acc, val) => acc.concat(val), []);
+    topics = topics?.filter(item => {
+      return !item.deleted;
+    });
     setDisplayData(topics || []);
   }, [data]);
+
+  // useEffect(() => {
+  //   navigation.setOptions({
+  //     title: title,
+  //     headerRight: () => {
+  //       return <CurrentAvatarView />;
+  //     },
+  //   });
+  // }, []);
 
   return (
     <View

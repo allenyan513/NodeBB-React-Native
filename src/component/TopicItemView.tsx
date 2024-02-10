@@ -14,7 +14,12 @@ const MultiMediaView: React.FC<{multiMedia: MultiMedia | undefined}> = ({
     return <View />;
   }
   return (
-    <View style={{height: 150}}>
+    <View
+      style={{
+        width: 150,
+        height: 150,
+        // backgroundColor: 'red',
+      }}>
       <Image
         style={{
           height: 150,
@@ -77,18 +82,27 @@ const TopicItemView: React.FC<TopicItemProps> = ({
             timestamp={topic?.lastposttime}
           />
           {/*分类名称 */}
-          <Text
-            style={{
-              borderColor: COLORS.f9f9f9,
-              borderWidth: 1,
-              padding: 8,
-              borderRadius: 8,
-              color: COLORS.primaryTextColor,
-              backgroundColor: COLORS.f9f9f9,
-              fontSize: 12,
+          <TouchableWithoutFeedback
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate('TopicList', {
+                cid: topic?.cid,
+                title: topic?.category?.name,
+              });
             }}>
-            {topic?.category.name}
-          </Text>
+            <Text
+              style={{
+                borderColor: COLORS.f9f9f9,
+                borderWidth: 1,
+                padding: 8,
+                borderRadius: 8,
+                color: COLORS.primaryTextColor,
+                backgroundColor: COLORS.f9f9f9,
+                fontSize: 12,
+              }}>
+              {topic?.category.name}
+            </Text>
+          </TouchableWithoutFeedback>
         </View>
 
         <View
@@ -97,7 +111,11 @@ const TopicItemView: React.FC<TopicItemProps> = ({
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-          <View style={{}}>
+          <View
+            style={{
+              // backgroundColor: 'blue',
+              flex: 1,
+            }}>
             {/*标题*/}
             <Text
               style={{

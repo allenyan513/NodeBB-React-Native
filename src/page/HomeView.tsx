@@ -6,20 +6,22 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useEffect, useRef, useState, useContext} from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import PagerView from 'react-native-pager-view';
 import TopicListView from './TopicListView.tsx';
-import {useMMKVObject} from 'react-native-mmkv';
 import {HomeTopTab, User} from '../types.tsx';
 import CategoryAPI from '../service/categoryAPI.tsx';
 import COLORS from '../colors.tsx';
 import CurrentAvatarView from '../component/CurrentAvatarView.tsx';
 import {useTranslation} from 'react-i18next';
+import {useAuth} from '../context/AuthContext.tsx';
+import {useNavigation} from '@react-navigation/native';
 
 const HomeView = () => {
   const pagerViewRef = useRef<PagerView | null>(null);
   const {t} = useTranslation();
+  const {isAuthAlready, currentUser} = useAuth();
+  const navigation = useNavigation();
 
   const defaultTabs: HomeTopTab[] = [
     {
@@ -121,7 +123,7 @@ const HomeView = () => {
       </View>
       <PagerView
         style={{flex: 1}}
-        initialPage={0}
+        initialPage={1}
         ref={pagerViewRef}
         onPageScroll={e => {}}
         onPageSelected={e => {

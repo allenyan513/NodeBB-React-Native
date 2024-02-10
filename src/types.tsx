@@ -156,6 +156,7 @@ export interface Topic {
   index: number;
   topicThumb: string; //主题首张图
   multimedia: MultiMedia; //多媒体资源
+
 }
 
 export interface Post {

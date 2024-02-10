@@ -59,7 +59,7 @@ const SignInView = () => {
           }}
           onPress={async () => {
             await appleSignIn();
-            // navigation.goBack();
+            navigation.goBack();
           }}
         />
 
@@ -136,7 +136,7 @@ const SignInView = () => {
               // @ts-ignore
               navigation.navigate('MyWebView', {
                 title: t('Content Policy'),
-                uri: 'https://nodebb-app.web.app/content_poliy.html',
+                uri: 'https://nodebb-app.web.app/content_policy.html',
               });
             }}
             style={{

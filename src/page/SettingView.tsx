@@ -6,6 +6,8 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import COLORS from '../colors.tsx';
 import {useAuth} from '../context/AuthContext.tsx';
@@ -21,6 +23,7 @@ import {useTranslation} from 'react-i18next';
 const SettingView = () => {
   const {t} = useTranslation();
   const navigation = useNavigation();
+  const [isSignOuting, setIsSignOuting] = useState(false);
   const {currentUser, user, refreshVerifyTokenAndUser, signOut, deleteUser} =
     useAuth();
 
@@ -45,6 +48,29 @@ const SettingView = () => {
     }
   };
 
+  const onClickChangeUserName = () => {
+    // show a system dialog to change username
+
+    Alert.prompt(
+      t('Change UserName'),
+      t('Please input new username'),
+      async (newUserName: string) => {
+        try {
+          const uid = user?.uid;
+          if (uid === undefined) {
+            Alert.alert(t('Error'), t('Failed to upload avatar'));
+            return;
+          }
+          await UserAPI.updateUserName(uid, newUserName);
+          await refreshVerifyTokenAndUser();
+          Alert.alert(t('Success'), t('Change username success'));
+        } catch (e) {
+          Alert.alert(t('Error'), t('Failed to change username'));
+        }
+      },
+    );
+  };
+
   const onClickChangeAvatar = () => {
     launchImageLibrary({mediaType: 'photo'}, response => {
       if (response.didCancel) {
@@ -60,6 +86,7 @@ const SettingView = () => {
   };
 
   const onClickSignOut = async () => {
+    setIsSignOuting(true);
     await signOut();
     navigation.goBack();
   };
@@ -125,31 +152,21 @@ const SettingView = () => {
         <View style={styles.groupContainer}>
           <View style={styles.itemContainer}>
             <Text style={styles.itemTitle}>{t('UserName')}</Text>
-            <Text style={styles.itemContent}>{user?.username}</Text>
+            <TouchableWithoutFeedback onPress={onClickChangeUserName}>
+              <Text style={styles.itemContent}>{user?.username}</Text>
+            </TouchableWithoutFeedback>
           </View>
           <TouchableOpacity onPress={onClickChangeAvatar}>
             <View style={styles.itemContainer}>
               <Text style={styles.itemTitle}>{t('Avatar')}</Text>
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Button
-                  variant="unstyled"
-                  colorScheme={'primary'}
-                  onPress={onClickChangeAvatar}>
-                  {t('Change Avatar')}
-                </Button>
+              <TouchableWithoutFeedback onPress={onClickChangeAvatar}>
                 <Avatar
                   size={'sm'}
                   source={{
                     uri: user?.picture,
                   }}
                 />
-              </View>
+              </TouchableWithoutFeedback>
             </View>
           </TouchableOpacity>
           <View style={styles.itemContainer}>
@@ -206,6 +223,14 @@ const SettingView = () => {
           <TouchableOpacity onPress={onClickSignOut}>
             <View style={styles.itemContainer}>
               <Text style={styles.itemTitle}>{t('Sign Out')}</Text>
+              {isSignOuting && (
+                <ActivityIndicator
+                  style={{
+                    width: 25,
+                    height: 25,
+                  }}
+                />
+              )}
             </View>
           </TouchableOpacity>
         </View>

@@ -6,6 +6,7 @@ import {useQueryClient} from '@tanstack/react-query';
 import {User} from '../types.tsx';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import UserAPI from '../service/userAPI.tsx';
+import {useNavigation} from '@react-navigation/native';
 
 GoogleSignin.configure({
   webClientId:
@@ -24,17 +25,28 @@ interface AuthContextProps {
   signOut: any;
   deleteUser: any;
   refreshVerifyTokenAndUser: any;
+  checkSignIn: any;
 }
 
 const AuthContext = createContext<AuthContextProps | null>(null);
 
 export function AuthProvider({children}: {children: any}) {
+  const navigation = useNavigation();
   const queryClient = useQueryClient();
   const [isAuthAlready, setIsAuthAlready] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<FirebaseAuthTypes.User>();
 
   const [verifyToken, setVerifyToken] = useMMKVString('user.verifyToken');
   const [user, setUser] = useMMKVObject<User>('user');
+
+  const checkSignIn = () => {
+    if (!currentUser) {
+      // @ts-ignore
+      navigation.navigate('SignIn');
+      return false;
+    }
+    return true;
+  };
 
   const deleteUser = async () => {
     await auth().currentUser?.delete();
@@ -160,6 +172,7 @@ export function AuthProvider({children}: {children: any}) {
         signOut,
         deleteUser,
         refreshVerifyTokenAndUser,
+        checkSignIn,
       }}>
       {children}
     </AuthContext.Provider>

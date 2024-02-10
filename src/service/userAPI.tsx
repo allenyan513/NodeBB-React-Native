@@ -7,6 +7,12 @@ import {
 } from '../types.tsx';
 
 const UserAPI = {
+  updateUserName: async function (uid: number, username: string) {
+    const res = await axiosInstance.put(`/api/v3/users/${uid}`, {
+      username: username,
+    });
+    return res.data as NodeBBResponse<any>;
+  },
   updateUserPicture: async function (uid: number, url: string) {
     const res = await axiosInstance.put(`/api/v3/users/${uid}/picture`, {
       url: url,
