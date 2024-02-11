@@ -16,6 +16,7 @@ import CurrentAvatarView from '../component/CurrentAvatarView.tsx';
 import {useTranslation} from 'react-i18next';
 import {useAuth} from '../context/AuthContext.tsx';
 import {useNavigation} from '@react-navigation/native';
+import messaging from '@react-native-firebase/messaging';
 
 const HomeView = () => {
   const pagerViewRef = useRef<PagerView | null>(null);
@@ -25,13 +26,13 @@ const HomeView = () => {
 
   const defaultTabs: HomeTopTab[] = [
     {
-      cid: 'recent',
-      name: t('Recent'),
+      cid: 'popular',
+      name: t('Popular'),
       selected: false,
     },
     {
-      cid: 'popular',
-      name: t('Popular'),
+      cid: 'recent',
+      name: t('Recent'),
       selected: false,
     },
   ];

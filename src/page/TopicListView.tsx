@@ -36,12 +36,6 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
   const cid = props.cid || route.params?.cid;
   // @ts-ignore
   const title = props.title || route.params?.title || '';
-  navigation.setOptions({
-    title: title,
-    headerRight: () => {
-      return <CurrentAvatarView />;
-    },
-  });
 
   // @ts-ignore
   const fetchData = async params => {
@@ -84,14 +78,14 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
     queryFn: fetchData,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
-      console.log('lastPage', lastPage.length, pageSize);
+      // console.log('lastPage', lastPage.length, pageSize);
       if (lastPage.length !== pageSize) {
         return undefined;
       }
       return lastPageParam + 1;
     },
   });
-  console.log('status', hasNextPage, status);
+  // console.log('status', hasNextPage, status);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -177,14 +171,14 @@ const TopicListView: React.FC<TopicListViewProps> = props => {
     setDisplayData(topics || []);
   }, [data]);
 
-  // useEffect(() => {
-  //   navigation.setOptions({
-  //     title: title,
-  //     headerRight: () => {
-  //       return <CurrentAvatarView />;
-  //     },
-  //   });
-  // }, []);
+  useEffect(() => {
+    navigation.setOptions({
+      title: title,
+      headerRight: () => {
+        return <CurrentAvatarView />;
+      },
+    });
+  }, []);
 
   return (
     <View

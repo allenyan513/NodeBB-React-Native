@@ -7,6 +7,7 @@ import {User} from '../types.tsx';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import UserAPI from '../service/userAPI.tsx';
 import {useNavigation} from '@react-navigation/native';
+import fcmService from '../service/fcmService.tsx';
 
 GoogleSignin.configure({
   webClientId:
@@ -75,9 +76,16 @@ export function AuthProvider({children}: {children: any}) {
    */
   const refreshVerifyTokenAndUser = async () => {
     try {
+      // 1.交换verifyToken
       const res = await UserAPI.exchangeVerifyToken();
       setVerifyToken(res.response.verifyToken);
-      const resUser = await UserAPI.getUserByUid(res.response.uid);
+
+      // 2.获取用户信息和保存deviceToken
+      const deviceToken = await fcmService.getDeviceToken();
+      const [resUser, resDeviceToken] = await Promise.all([
+        UserAPI.getUserByUid(res.response.uid),
+        UserAPI.saveDeviceToken(deviceToken),
+      ]);
       setUser(resUser);
     } catch (e) {
       console.error(e);

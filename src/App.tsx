@@ -30,6 +30,7 @@ import {useTranslation} from 'react-i18next';
 import {GlobalProvider} from './context/GlobalContext.tsx';
 import './i18n.js';
 import TopicListView from './page/TopicListView.tsx';
+import fcmService from './service/fcmService.tsx';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -181,6 +182,13 @@ function App(): React.JSX.Element {
       initialColorMode: 'dark',
     },
   });
+
+  useEffect(() => {
+    fcmService.getDeviceToken();
+    fcmService.requestUserPermission();
+    const unsubscribe = fcmService.onMessage();
+    return unsubscribe;
+  }, []);
 
   return (
     <NativeBaseProvider>

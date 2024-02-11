@@ -27,6 +27,17 @@ const UserAPI = {
     const res = await axiosInstance.get('/api/v3/exchangeVerifyToken');
     return res.data as NodeBBResponse<ExchangeVerifyTokenResponse>;
   },
+
+  /**
+   * 上传firebase deviceToken
+   */
+  saveDeviceToken: async function (deviceToken: string) {
+    const res = await axiosInstance.post('/api/v3/users/saveDeviceToken', {
+      deviceToken: deviceToken,
+    });
+    return res.data as NodeBBResponse<any>;
+  },
+
   getUserByUid: async function (uid: number) {
     const res = await axiosInstance.get(`/api/user/uid/${uid}`);
     return res.data as User;

@@ -1,3 +1,4 @@
+#import "RNFBMessagingModule.h"
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
@@ -11,7 +12,8 @@
   self.moduleName = @"nodebb_app";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
-  self.initialProps = @{};
+  // self.initialProps = @{};
+  self.initialProps = [RNFBMessagingModule addCustomPropsToUserProps:nil withLaunchOptions:launchOptions];
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
