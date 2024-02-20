@@ -1,4 +1,9 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+This is a React Native Client for [NodeBB](https://nodebb.org)
+
+![](./assets/IMG_1039.PNG)
+![](./assets/IMG_1040.PNG)
+![](./assets/IMG_1041.PNG)
+![](./assets/IMG_1042.PNG)
 
 # Getting Started
 
