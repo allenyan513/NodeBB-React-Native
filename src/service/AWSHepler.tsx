@@ -1,12 +1,13 @@
 import {Options, RNS3} from 'react-native-aws3';
 import {Asset} from 'react-native-image-picker';
+import Config from 'react-native-config';
 
 const options: Options = {
   keyPrefix: '',
-  bucket: 'halifaxer-nodebb',
-  region: 'us-east-2',
-  accessKey: 'AKIAZTFNRMBTIYTHO7AA',
-  secretKey: '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',
+  bucket: Config.AWS_BUCKET || '',
+  region: Config.AWS_REGION || '',
+  accessKey: Config.AWS_ACCESS_KEY || '',
+  secretKey: Config.AWS_SECRET_KEY || '',
   successActionStatus: 201,
 };
 

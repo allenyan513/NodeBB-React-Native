@@ -5,24 +5,19 @@ import {
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, {useEffect, useRef, useState, useContext} from 'react';
-import {useQuery, useQueryClient} from '@tanstack/react-query';
+import React, {useRef, useState} from 'react';
+import {useQuery} from '@tanstack/react-query';
 import PagerView from 'react-native-pager-view';
 import TopicListView from './TopicListView.tsx';
-import {HomeTopTab, User} from '../types.tsx';
+import {HomeTopTab} from '../types.tsx';
 import CategoryAPI from '../service/categoryAPI.tsx';
 import COLORS from '../colors.tsx';
 import CurrentAvatarView from '../component/CurrentAvatarView.tsx';
 import {useTranslation} from 'react-i18next';
-import {useAuth} from '../context/AuthContext.tsx';
-import {useNavigation} from '@react-navigation/native';
-import messaging from '@react-native-firebase/messaging';
 
 const HomeView = () => {
   const pagerViewRef = useRef<PagerView | null>(null);
   const {t} = useTranslation();
-  const {isAuthAlready, currentUser} = useAuth();
-  const navigation = useNavigation();
 
   const defaultTabs: HomeTopTab[] = [
     {

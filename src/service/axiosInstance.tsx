@@ -1,13 +1,12 @@
 import axios from 'axios';
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import Config from 'react-native-config';
+import auth from '@react-native-firebase/auth';
 import {MMKV} from 'react-native-mmkv';
-
+import Config from 'react-native-config';
 const storage = new MMKV();
 
+console.log('Config.API_URL', Config.API_URL);
 const axiosInstance = axios.create({
-  // baseURL: 'http://192.168.0.130:4567',
-  baseURL: 'https://nodebb-halifax-legxqdbi3q-uc.a.run.app',
+  baseURL: Config.API_URL,
   timeout: 30000,
 });
 

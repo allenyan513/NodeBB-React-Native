@@ -37,7 +37,7 @@ const Stack = createNativeStackNavigator();
 
 function HomeTabs() {
   const {t} = useTranslation();
-  const {currentUser, checkSignIn} = useAuth();
+  const {checkSignIn} = useAuth();
   return (
     <Tab.Navigator
       screenOptions={{

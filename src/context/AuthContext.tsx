@@ -8,10 +8,10 @@ import {appleAuth} from '@invertase/react-native-apple-authentication';
 import UserAPI from '../service/userAPI.tsx';
 import {useNavigation} from '@react-navigation/native';
 import fcmService from '../service/fcmService.tsx';
+import Config from 'react-native-config';
 
 GoogleSignin.configure({
-  webClientId:
-    '657481286430-6dqd00nv90aiff1tpjv346uldnesvl6u.apps.googleusercontent.com',
+  webClientId: Config.GOOGLE_SIGNIN_WEB_CLIENT_ID,
 });
 interface AuthContextProps {
   currentUser: FirebaseAuthTypes.User | undefined;
